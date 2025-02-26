@@ -1,7 +1,28 @@
 /* Global settings */
 
 body {
-  margin: 0;
+  margin: 16px;
   box-sizing: border-box;
   background-color: #FAFBFF;
+  font-family: 'Futura Std', sans-serif;
+}
+
+h1 {
+  font-weight: 700;
+  font-family: 64px;
+  color: #0018A4;
+}
+
+.form-container {
+  display: flex;
+  gap: 2rem;
+}
+
+.grid-container{
+  display: grid;
+  grid-template-columns: 3fr;
+}
+
+.recipe-cards {
+
 }
