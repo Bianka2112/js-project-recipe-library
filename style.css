@@ -7,9 +7,19 @@ body {
   font-family: 'Futura Std', sans-serif;
 }
 
+button {
+  border-radius: 50px;
+  background: #CCFFE2;
+  color: #0018A4;
+  padding: 15px 20px;
+  outline: 0;
+  border: 0;
+  text-decoration: none;
+}
+
 h1 {
   font-weight: 700;
-  font-family: 64px;
+  font-size: 64px;
   color: #0018A4;
 }
 
@@ -18,11 +28,58 @@ h1 {
   gap: 2rem;
 }
 
+.button .sorted {
+  background: #FFECEA;
+}
+
+button:hover {
+  border-radius: 50px;
+  border: 2px solid #0018A4;
+  background: #CCFFE2;
+}
+
+button:focus {
+  background: blue;
+  color: white;
+}
+
 .grid-container{
   display: grid;
-  grid-template-columns: 3fr;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-gap: 0;
+  justify-content: center;
+  margin: 2rem  0;
+}
+
+img {
+  width: 100%;
+  height: 200px;
 }
 
 .recipe-cards {
+  width: 250px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  background-color: #fff;
+  padding: 16px 16px 24px 16px;
+  border-radius: 16px;
+  border: 1px solid #cecdcd;
+  gap: 16px;
+  box-shadow: 0px 0px 30px 0px rgba(0, 0, 0, 0.10);
+}
 
+.recipe-cards:hover {
+  border: 2px solid #0018A4;
+  box-shadow: 0px 0px 30px 0px rgba(0, 24, 164, 0.20);
+}
+
+.recipe-title, .recipe-details {
+  border-bottom: solid 2px rgba(219, 221, 223, 0.9);
+  width: 100%;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
 }
