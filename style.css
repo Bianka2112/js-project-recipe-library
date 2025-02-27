@@ -23,7 +23,7 @@ h1 {
   color: #0018A4;
 }
 
-.form-container {
+.filters-container {
   display: flex;
   gap: 2rem;
 }
@@ -46,7 +46,7 @@ button:focus {
 .grid-container{
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  grid-gap: 0;
+  grid-gap: 1rem;
   justify-content: center;
   margin: 2rem  0;
 }

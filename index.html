@@ -13,26 +13,28 @@
   </header>
 
   <main>
-    <div class="form-container">
-      <form>
+    <div class="filters-container">
+      <section>
         <h2>Filter by Kitchen</h2>
         <button id="all" class="filtered">All</button>
         <button id="italy" class="filtered">Italy</button>
-        <button id="USA" class="filtered">USA</button>
+        <button id="usa" class="filtered">USA</button>
         <button id="china" class="filtered">China</button>
-      </form>
+      </section>
 
-      <form>
+      <section>
         <h2>Sort by Time</h2>
         <button id="ascending" class="sorted">Ascending</button>
         <button id="descending" class="sorted">Descending</button>
-      </form>
+      </section>
     </div>
 
     <div class="grid-container">
       <article class="recipe-cards">
         <h3>Temporary placeholder for filters & sorting</h3>
+        <section id="message"></section>
       </article>
+      
       <article class="recipe-cards">
         <img 
           src="./assets/image.png" 
@@ -54,6 +56,7 @@
             </ul>
           </div>
       </article>
+      
       <article class="recipe-cards">
         <img 
           src="./assets/image.png" 
