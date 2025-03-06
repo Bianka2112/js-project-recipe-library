@@ -3,7 +3,6 @@ const messageBox = document.getElementById("message")
 
 const container = document.getElementById("js-recipe-container")
 
-
 const pickAllFilter = document.getElementById("all")
 const pickUsaFilter = document.getElementById("usa")
 const pickItalyFilter = document.getElementById("italy")
@@ -217,31 +216,53 @@ const recipes = [
   }
 ]
 
+// Function to generate an unordered list of ingredients
+function generateIngredientsList(ingredients) {
+const ul = document.createElement('ul') // Create the unordered list
+
+// Iterate through the ingredients array and create <li> items
+ingredients.forEach(ingredient => {
+  const li = document.createElement('li') // Create a list item for each ingredient
+  li.textContent = ingredient
+  ul.appendChild(li)
+})
+
+return ul // Return the unordered list
+}
+
+// Function for dynamic recipe cards
 const loadRecipes = (recipesArray) => {
   container.innerHTML = '' //resets the container before load the recipes
 
   recipesArray.forEach(item => {
-    container.innerHTML += `<article class="recipe-cards">
-        <img 
-          src="./assets/image.png" 
-          alt="">
-        <div class="recipe-title">
+    // Generate the ingredients list for this recipe
+    const ingredientsList = generateIngredientsList(item.ingredients);
+    
+    // Create the recipe card content dynamically
+    const recipeCard = document.createElement('article')
+    recipeCard.classList.add('recipe-cards')
+
+    recipeCard.innerHTML = `
+      <img src="./assets/image.png" alt="${item.title}">
+      <div class="recipe-title">
         <h3>${item.title}</h3>
-        </div>
-        <div class="recipe-details">
-          <p class="cuisine"><b>Cuisine:</b> ${item.cuisine}</p>
-          <p class="time"><b>Time:</b> ${item.readyInMinutes}</p>
-        </div>
-        <div class="ingredients">
-          <h4>Ingredients</h4>
-            <ul>
-              <li>6 chicken thighs</li>
-              <li>1/2 tsp salt</li>
-              <li>1/2 tsp Mrs Dash seasoning</li>
-              <li>1/4 tsp freshly ground black pepper</li>
-            </ul>
-          </div>
-      </article>`
+      </div>
+      <div class="recipe-details">
+        <p class="cuisine"><b>Cuisine:</b> ${item.cuisine}</p>
+        <p class="time"><b>Time:</b> ${item.readyInMinutes} minutes</p>
+        <p class="servings"><b>Serves:</b> ${item.servings}</p>
+      </div>
+      <div class="ingredients">
+        <h4>Ingredients</h4>
+      </div>
+    `
+
+    // Append the ingredients list dynamically
+    const ingredientsContainer = recipeCard.querySelector('.ingredients')
+    ingredientsContainer.appendChild(ingredientsList)
+
+    // Append the recipe card to the container
+    container.appendChild(recipeCard);
   })
 }
 
