@@ -1,6 +1,8 @@
-console.log("running")
 
 const messageBox = document.getElementById("message")
+
+const container = document.getElementById("js-recipe-container")
+
 
 const pickAllFilter = document.getElementById("all")
 const pickUsaFilter = document.getElementById("usa")
@@ -41,12 +43,12 @@ filterChoice()
 const sortChoice = () => {
   
   pickSort.addEventListener("click", () => {
-    if (document.getElementById("ascending"))
+    if (pickSort = document.getElementById("ascending"))
       messageBox.innerHTML += `
       <p>In a rush much?<p>`
-    // else (document.getElementById("descending"))
-    //   messageBox.innerHTML += `
-    //   <p>Slow and steady, made with love<p>`
+    else (document.getElementById("descending"))
+      messageBox.innerHTML += `
+      <p>Slow and steady, made with love<p>`
 })
 } 
 
@@ -214,3 +216,33 @@ const recipes = [
     popularity: 80
   }
 ]
+
+const loadRecipes = (recipesArray) => {
+  container.innerHTML = '' //resets the container before load the recipes
+
+  recipesArray.forEach(item => {
+    container.innerHTML += `<article class="recipe-cards">
+        <img 
+          src="./assets/image.png" 
+          alt="">
+        <div class="recipe-title">
+        <h3>${item.title}</h3>
+        </div>
+        <div class="recipe-details">
+          <p class="cuisine"><b>Cuisine:</b> ${item.cuisine}</p>
+          <p class="time"><b>Time:</b> ${item.readyInMinutes}</p>
+        </div>
+        <div class="ingredients">
+          <h4>Ingredients</h4>
+            <ul>
+              <li>6 chicken thighs</li>
+              <li>1/2 tsp salt</li>
+              <li>1/2 tsp Mrs Dash seasoning</li>
+              <li>1/4 tsp freshly ground black pepper</li>
+            </ul>
+          </div>
+      </article>`
+  })
+}
+
+loadRecipes(recipes)
