@@ -6,35 +6,33 @@ const pickMexicanFilter = document.getElementById("mexican")
 const pickMediterraneanFilter = document.getElementById("mediterranean")
 const pickAsianFilter = document.getElementById("asian")
 
+//Helper function
+const updateMessage = (message) => {
+  messageBox.innerHTML = '';  // Clear the message box
+  messageBox.innerHTML += `<p>${message}</p>`
+}
+
 // Function to filter by Cuisine
 const filterChoice = () => {
 
   pickAllFilter.addEventListener("click", () => {
-    console.log("all picked")
-    messageBox.innerHTML += `
-    <p>You eat everything, maybe liver then?</p>`
+    updateMessage("You eat everything, maybe liver then?")
     loadRecipes(recipes)
   })
 
   pickMexicanFilter.addEventListener("click", () => {
-    console.log("mexican picked")
-    messageBox.innerHTML += `
-    <p>Let's get you that fried chicken and waffles!</p>`
-    loadRecipes(recipes.filter(recipes => recipes.cuisine.toLowerCase() === "mexican"))
+    updateMessage("Yes. The answer is always tacos")
+    loadRecipes(recipes.filter(items => items.cuisine.toLowerCase() === "mexican"))
   })
 
   pickMediterraneanFilter.addEventListener("click", () => {
-    console.log("mediterranean picked")
-    messageBox.innerHTML += `
-    <p>Quick: pizza or pasta? The answer is always YES</p>`
-    loadRecipes(recipes.filter(recipes => recipes.cuisine.toLowerCase() === "mediterranean"))
+    updateMessage("They say Mediterranean is the healthies diet")
+    loadRecipes(recipes.filter(items => items.cuisine.toLowerCase() === "mediterranean"))
   })
 
   pickAsianFilter.addEventListener("click", () => {
-    console.log("asian picked")
-    messageBox.innerHTML += `
-    <p>你选择了中文</p>`
-    loadRecipes(recipes.filter(recipes => recipes.cuisine.toLowerCase() === "asian"))
+    updateMessage("你选择了中文")
+    loadRecipes(recipes.filter(items => items.cuisine.toLowerCase() === "asian"))
   })
 }
 
@@ -44,14 +42,12 @@ const sortChoice = () => {
   const descendingButton = document.getElementById("descending")
 
   ascendingButton.addEventListener("click", () => {
-    console.log("ascending picked")
-    messageBox.innerHTML += `<p>In a rush much?<p>`
-    loadRecipes([...recipes].sort((a, b) => a.readyInMinutes - b.readyInMinutes)); // Sort recipes in ascending order by time
+    updateMessage("What's the rush?")
+    loadRecipes([...recipes].sort((a, b) => a.readyInMinutes - b.readyInMinutes))
   })
 
   descendingButton.addEventListener("click", () => {
-    console.log("descending picked")
-    messageBox.innerHTML += `<p>Slow and steady, made with love<p>`
+    updateMessage("Slow and steady, made with love")
     loadRecipes([...recipes].sort((a, b) => b.readyInMinutes - a.readyInMinutes))
   })
 }
