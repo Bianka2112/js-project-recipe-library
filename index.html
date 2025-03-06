@@ -16,16 +16,18 @@
     <div class="filters-container">
       <section>
         <h2>Filter by Kitchen</h2>
-        <button id="all" class="filtered">All</button>
-        <button id="italy" class="filtered">Italy</button>
-        <button id="usa" class="filtered">USA</button>
-        <button id="china" class="filtered">China</button>
+        <button id="all" class="filtered" type="button">All</button>
+        <button id="italy" class="filtered" type="button">Italy</button>
+        <button id="usa" class="filtered" type="button">USA</button>
+        <button id="china" class="filtered" type="button">China</button>
       </section>
 
       <section>
         <h2>Sort by Time</h2>
-        <button id="ascending" class="sorted">Ascending</button>
-        <button id="descending" class="sorted">Descending</button>
+        <div id="sort-btns">
+          <button id="ascending" class="sorted">Ascending</button>
+          <button id="descending" class="sorted">Descending</button>
+        </div>
       </section>
     </div>
 
@@ -66,7 +68,9 @@
         </div>
         <div class="recipe-details">
           <h4 class="cuisine">Cuisine</h4>
+          <p class="cuisine"> Italian</p>
           <h4 class="time">Time</h4>
+          <p class="time"> 1h 30min</p>
         </div>
         <div class="ingredients">
           <h4>Ingredients</h4>

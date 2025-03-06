@@ -7,16 +7,6 @@ body {
   font-family: 'Futura Std', sans-serif;
 }
 
-button {
-  border-radius: 50px;
-  background: #CCFFE2;
-  color: #0018A4;
-  padding: 15px 20px;
-  outline: 0;
-  border: 0;
-  text-decoration: none;
-}
-
 h1 {
   font-weight: 700;
   font-size: 64px;
@@ -28,19 +18,27 @@ h1 {
   gap: 2rem;
 }
 
-.button .sorted {
-  background: #FFECEA;
+button {
+  border-radius: 50px;
+  background: #CCFFE2;
+  color: #0018A4;
+  padding: 15px 20px;
+  outline: 0;
+  border: 0;
+  text-decoration: none;
 }
 
 button:hover {
-  border-radius: 50px;
   border: 2px solid #0018A4;
-  background: #CCFFE2;
 }
 
-button:focus {
-  background: blue;
+button:active {
+  background-color: blue;
   color: white;
+}
+
+.button.sorted {
+  background: #FFECEA;
 }
 
 .grid-container{
