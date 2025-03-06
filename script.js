@@ -1,57 +1,60 @@
 
 const messageBox = document.getElementById("message")
 
-const container = document.getElementById("js-recipe-container")
-
 const pickAllFilter = document.getElementById("all")
-const pickUsaFilter = document.getElementById("usa")
-const pickItalyFilter = document.getElementById("italy")
-const pickChinaFilter = document.getElementById("china")
+const pickMexicanFilter = document.getElementById("mexican")
+const pickMediterraneanFilter = document.getElementById("mediterranean")
+const pickAsianFilter = document.getElementById("asian")
 
-const pickSort = document.getElementById("sort-btns")
-
+// Function to filter by Cuisine
 const filterChoice = () => {
 
   pickAllFilter.addEventListener("click", () => {
     console.log("all picked")
     messageBox.innerHTML += `
     <p>You eat everything, maybe liver then?</p>`
+    loadRecipes(recipes)
   })
 
-  pickUsaFilter.addEventListener("click", () => {
-    console.log("usa picked")
+  pickMexicanFilter.addEventListener("click", () => {
+    console.log("mexican picked")
     messageBox.innerHTML += `
     <p>Let's get you that fried chicken and waffles!</p>`
+    loadRecipes(recipes.filter(recipes => recipes.cuisine.toLowerCase() === "mexican"))
   })
 
-  pickItalyFilter.addEventListener("click", () => {
-    console.log("italy picked")
+  pickMediterraneanFilter.addEventListener("click", () => {
+    console.log("mediterranean picked")
     messageBox.innerHTML += `
     <p>Quick: pizza or pasta? The answer is always YES</p>`
+    loadRecipes(recipes.filter(recipes => recipes.cuisine.toLowerCase() === "mediterranean"))
   })
 
-  pickChinaFilter.addEventListener("click", () => {
-    console.log("china picked")
+  pickAsianFilter.addEventListener("click", () => {
+    console.log("asian picked")
     messageBox.innerHTML += `
     <p>你选择了中文</p>`
+    loadRecipes(recipes.filter(recipes => recipes.cuisine.toLowerCase() === "asian"))
   })
 }
 
-filterChoice()
-
+// Function to sort by time
 const sortChoice = () => {
-  
-  pickSort.addEventListener("click", () => {
-    if (pickSort = document.getElementById("ascending"))
-      messageBox.innerHTML += `
-      <p>In a rush much?<p>`
-    else (document.getElementById("descending"))
-      messageBox.innerHTML += `
-      <p>Slow and steady, made with love<p>`
-})
-} 
+  const ascendingButton = document.getElementById("ascending")
+  const descendingButton = document.getElementById("descending")
 
-sortChoice()
+  ascendingButton.addEventListener("click", () => {
+    console.log("ascending picked")
+    messageBox.innerHTML += `<p>In a rush much?<p>`
+    loadRecipes([...recipes].sort((a, b) => a.readyInMinutes - b.readyInMinutes)); // Sort recipes in ascending order by time
+  })
+
+  descendingButton.addEventListener("click", () => {
+    console.log("descending picked")
+    messageBox.innerHTML += `<p>Slow and steady, made with love<p>`
+    loadRecipes([...recipes].sort((a, b) => b.readyInMinutes - a.readyInMinutes))
+  })
+}
 
 // Technigo Recipe block
 const recipes = [
@@ -216,21 +219,9 @@ const recipes = [
   }
 ]
 
-// Function to generate an unordered list of ingredients
-function generateIngredientsList(ingredients) {
-const ul = document.createElement('ul') // Create the unordered list
+// Section for dynamic recipe cards
+const container = document.getElementById("js-recipe-container")
 
-// Iterate through the ingredients array and create <li> items
-ingredients.forEach(ingredient => {
-  const li = document.createElement('li') // Create a list item for each ingredient
-  li.textContent = ingredient
-  ul.appendChild(li)
-})
-
-return ul // Return the unordered list
-}
-
-// Function for dynamic recipe cards
 const loadRecipes = (recipesArray) => {
   container.innerHTML = '' //resets the container before load the recipes
 
@@ -256,7 +247,19 @@ const loadRecipes = (recipesArray) => {
         <h4>Ingredients</h4>
       </div>
     `
-
+  // Function to generate an unordered list of ingredients
+  function generateIngredientsList(ingredients) {
+    const ul = document.createElement('ul') // Create the unordered list
+    
+    // Iterate through the ingredients array and create <li> items
+    ingredients.forEach(ingredient => {
+      const li = document.createElement('li') // Create a list item for each ingredient
+      li.textContent = ingredient
+      ul.appendChild(li)
+    })
+  
+  return ul // Return the unordered list
+  }
     // Append the ingredients list dynamically
     const ingredientsContainer = recipeCard.querySelector('.ingredients')
     ingredientsContainer.appendChild(ingredientsList)
@@ -267,3 +270,7 @@ const loadRecipes = (recipesArray) => {
 }
 
 loadRecipes(recipes)
+
+filterChoice()
+
+sortChoice()
