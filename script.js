@@ -6,31 +6,47 @@ const pickMexicanFilter = document.getElementById("mexican")
 const pickMediterraneanFilter = document.getElementById("mediterranean")
 const pickAsianFilter = document.getElementById("asian")
 
-//Helper function
+const buttons = document.querySelectorAll(".filtered, .sorted")
+
+//Helper functions
 const updateMessage = (message) => {
   messageBox.innerHTML = '';  // Clear the message box
   messageBox.innerHTML += `<p>${message}</p>`
+}
+
+const clearActiveButtons = () => {
+  buttons.forEach(button => {
+    button.classList.remove("active");
+  });
 }
 
 // Function to filter by Cuisine
 const filterChoice = () => {
 
   pickAllFilter.addEventListener("click", () => {
+    clearActiveButtons()
+    pickAllFilter.classList.add("active")
     updateMessage("You eat everything, maybe liver then?")
     loadRecipes(recipes)
   })
 
   pickMexicanFilter.addEventListener("click", () => {
+    clearActiveButtons()
+    pickMexicanFilter.classList.add("active")
     updateMessage("Yes. The answer is always tacos")
     loadRecipes(recipes.filter(items => items.cuisine.toLowerCase() === "mexican"))
   })
 
   pickMediterraneanFilter.addEventListener("click", () => {
-    updateMessage("They say Mediterranean is the healthies diet")
+    clearActiveButtons()
+    pickMediterraneanFilter.classList.add("active")
+    updateMessage("They say Mediterranean is the healthiest diet")
     loadRecipes(recipes.filter(items => items.cuisine.toLowerCase() === "mediterranean"))
   })
 
   pickAsianFilter.addEventListener("click", () => {
+    clearActiveButtons()
+    pickAsianFilter.classList.add("active")
     updateMessage("你选择了中文")
     loadRecipes(recipes.filter(items => items.cuisine.toLowerCase() === "asian"))
   })
@@ -42,11 +58,15 @@ const sortChoice = () => {
   const descendingButton = document.getElementById("descending")
 
   ascendingButton.addEventListener("click", () => {
+    clearActiveButtons()
+    ascendingButton.classList.add("active")
     updateMessage("What's the rush?")
     loadRecipes([...recipes].sort((a, b) => a.readyInMinutes - b.readyInMinutes))
   })
 
   descendingButton.addEventListener("click", () => {
+    clearActiveButtons()
+    descendingButton.classList.add("active")
     updateMessage("Slow and steady, made with love")
     loadRecipes([...recipes].sort((a, b) => b.readyInMinutes - a.readyInMinutes))
   })
@@ -245,17 +265,17 @@ const loadRecipes = (recipesArray) => {
     `
   // Function to generate an unordered list of ingredients
   function generateIngredientsList(ingredients) {
-    const ul = document.createElement('ul') // Create the unordered list
+    const ul = document.createElement('ul')
     
     // Iterate through the ingredients array and create <li> items
     ingredients.forEach(ingredient => {
-      const li = document.createElement('li') // Create a list item for each ingredient
+      const li = document.createElement('li') 
       li.textContent = ingredient
       ul.appendChild(li)
     })
-  
-  return ul // Return the unordered list
+    return ul
   }
+
     // Append the ingredients list dynamically
     const ingredientsContainer = recipeCard.querySelector('.ingredients')
     ingredientsContainer.appendChild(ingredientsList)
