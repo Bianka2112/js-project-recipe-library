@@ -109,18 +109,24 @@ const displayRandomRecipe = (item) => {
   container.innerHTML = '' 
   
   const recipeHTML = `
-    <img src="./assets/image.png" alt="${item.title}">
-    <h2>${item.title}</h2>
-    <p><strong>Cuisine:</strong> ${item.cuisine}</p>
-    <p><strong>Time:</strong> ${item.readyInMinutes} minutes</p>
-    <p><strong>Serves:</strong> ${item.servings}</p>
-    <h4>Ingredients:</h4>
-    <ul>
-      ${item.ingredients.map(ingredient => `<li>${ingredient}</li>`).join('')}
-    </ul>
-    <a href="${item.sourceUrl}" target="_blank">Full recipe</a>
+      <img src="./assets/image.png" alt="${item.title}">
+      <div class="recipe-title">
+        <h3>${item.title}</h3>
+      </div>
+      <div class="recipe-details">
+        <p class="cuisine"><b>Cuisine:</b> ${item.cuisine}</p>
+        <p class="time"><b>Time:</b> ${item.readyInMinutes} minutes</p>
+        <p class="servings"><b>Serves:</b> ${item.servings}</p>
+      </div>
+      <div class="ingredients">
+        <h4>Ingredients:</h4>
+        <ul>
+        ${item.ingredients.map(ingredient => `<li>${ingredient}</li>`).join('')}
+        </ul>
+      </div>
+        <a href="${item.sourceUrl}" target="_blank">Full recipe</a>
     `
-
+    
   // Insert the HTML content into the random recipe section
   randomRecipeCard.innerHTML = recipeHTML
   container.appendChild(randomRecipeCard)
@@ -128,6 +134,7 @@ const displayRandomRecipe = (item) => {
 
 randomRecipeBtn.addEventListener('click', () => {
   clearActiveButtons()
+  updateMessage("I picked this just for you:")
   getRandomRecipe(recipes)
 })
 
@@ -316,7 +323,7 @@ const loadRecipes = (recipesArray) => {
         <p class="servings"><b>Serves:</b> ${item.servings}</p>
       </div>
       <div class="ingredients">
-        <h4>Ingredients</h4>
+        <h4>Ingredients:</h4>
       </div>
     `
     // Generate the ingredients list for this recipe
