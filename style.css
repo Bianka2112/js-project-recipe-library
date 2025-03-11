@@ -14,6 +14,7 @@ h1 {
 
 .filters-container {
   display: flex;
+  flex-wrap: wrap;
   gap: 2rem;
 }
 
@@ -25,6 +26,7 @@ button {
   outline: 0;
   border: 0;
   text-decoration: none;
+  cursor: pointer;
 }
 
 button:hover {
@@ -68,6 +70,7 @@ img {
 
 .recipe-cards:hover {
   border: 2px solid #0018A4;
+  cursor: pointer;
   box-shadow: 0px 0px 30px 0px rgba(0, 24, 164, 0.20);
 }
 

@@ -1,12 +1,13 @@
-
+//DOM selectors
 const messageBox = document.getElementById("message")
 
 const pickAllFilter = document.getElementById("all")
 const pickMexicanFilter = document.getElementById("mexican")
 const pickMediterraneanFilter = document.getElementById("mediterranean")
 const pickAsianFilter = document.getElementById("asian")
-
 const buttons = document.querySelectorAll(".filtered, .sorted")
+
+const container = document.getElementById("js-recipe-container")
 
 //Helper functions
 const updateMessage = (message) => {
@@ -16,8 +17,12 @@ const updateMessage = (message) => {
 
 const clearActiveButtons = () => {
   buttons.forEach(button => {
-    button.classList.remove("active");
-  });
+    button.classList.remove("active")
+  })
+}
+
+const displayNoResultsMessage = (message) => {
+  messageBox.innerHTML = `<p>${message}</p>`
 }
 
 // Function to filter by Cuisine
@@ -34,21 +39,36 @@ const filterChoice = () => {
     clearActiveButtons()
     pickMexicanFilter.classList.add("active")
     updateMessage("Yes. The answer is always tacos")
-    loadRecipes(recipes.filter(items => items.cuisine.toLowerCase() === "mexican"))
+    const filteredRecipes = recipes.filter(items => items.cuisine.toLowerCase() === "mexican")
+    if (filteredRecipes.length === 0) {
+      displayNoResultsMessage("No recipes found for Mexican cuisine")
+    } else {
+      loadRecipes(filteredRecipes)
+    }
   })
 
   pickMediterraneanFilter.addEventListener("click", () => {
     clearActiveButtons()
     pickMediterraneanFilter.classList.add("active")
     updateMessage("They say Mediterranean is the healthiest diet")
-    loadRecipes(recipes.filter(items => items.cuisine.toLowerCase() === "mediterranean"))
+    const filteredRecipes = recipes.filter(items => items.cuisine.toLowerCase() === "mediterranean")
+    if (filteredRecipes.length === 0) {
+      displayNoResultsMessage("No recipes found for Mediterranean cuisine")
+    } else {
+      loadRecipes(filteredRecipes)
+    }
   })
 
   pickAsianFilter.addEventListener("click", () => {
     clearActiveButtons()
     pickAsianFilter.classList.add("active")
     updateMessage("你选择了中文")
-    loadRecipes(recipes.filter(items => items.cuisine.toLowerCase() === "asian"))
+    const filteredRecipes = recipes.filter(items => items.cuisine.toLowerCase() === "asian")
+    if (filteredRecipes.length === 0) {
+      displayNoResultsMessage("No recipes found for Asian cuisine")
+    } else {
+      loadRecipes(filteredRecipes)
+    }
   })
 }
 
@@ -58,14 +78,14 @@ const sortChoice = () => {
   const descendingButton = document.getElementById("descending")
 
   ascendingButton.addEventListener("click", () => {
-    clearActiveButtons()
+    // clearActiveButtons()
     ascendingButton.classList.add("active")
     updateMessage("What's the rush?")
     loadRecipes([...recipes].sort((a, b) => a.readyInMinutes - b.readyInMinutes))
   })
 
   descendingButton.addEventListener("click", () => {
-    clearActiveButtons()
+    // clearActiveButtons()
     descendingButton.classList.add("active")
     updateMessage("Slow and steady, made with love")
     loadRecipes([...recipes].sort((a, b) => b.readyInMinutes - a.readyInMinutes))
@@ -236,14 +256,10 @@ const recipes = [
 ]
 
 // Section for dynamic recipe cards
-const container = document.getElementById("js-recipe-container")
-
 const loadRecipes = (recipesArray) => {
   container.innerHTML = '' //resets the container before load the recipes
 
   recipesArray.forEach(item => {
-    // Generate the ingredients list for this recipe
-    const ingredientsList = generateIngredientsList(item.ingredients);
     
     // Create the recipe card content dynamically
     const recipeCard = document.createElement('article')
@@ -263,9 +279,12 @@ const loadRecipes = (recipesArray) => {
         <h4>Ingredients</h4>
       </div>
     `
-  // Function to generate an unordered list of ingredients
-  function generateIngredientsList(ingredients) {
-    const ul = document.createElement('ul')
+    // Generate the ingredients list for this recipe
+    const ingredientsList = generateIngredientsList(item.ingredients);
+    
+    // Function to generate an unordered list of ingredients
+    function generateIngredientsList(ingredients) {
+      const ul = document.createElement('ul')
     
     // Iterate through the ingredients array and create <li> items
     ingredients.forEach(ingredient => {
