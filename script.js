@@ -6,6 +6,7 @@ const pickMexicanFilter = document.getElementById("mexican")
 const pickMediterraneanFilter = document.getElementById("mediterranean")
 const pickAsianFilter = document.getElementById("asian")
 const buttons = document.querySelectorAll(".filtered, .sorted")
+const randomRecipeBtn = document.getElementById('random-recipe-btn')
 
 const container = document.getElementById("js-recipe-container")
 
@@ -91,6 +92,45 @@ const sortChoice = () => {
     loadRecipes([...recipes].sort((a, b) => b.readyInMinutes - a.readyInMinutes))
   })
 }
+
+
+// Function to get a random recipe
+const getRandomRecipe = (recipesArray) => {
+  const randomIndex = Math.floor(Math.random() * recipesArray.length)
+  const randomRecipe = recipesArray[randomIndex];
+  
+  displayRandomRecipe(randomRecipe)
+}
+
+const displayRandomRecipe = (item) => {
+  const randomRecipeCard = document.createElement('article')
+  randomRecipeCard.classList.add('recipe-cards')
+
+  container.innerHTML = '' 
+  
+  const recipeHTML = `
+    <img src="./assets/image.png" alt="${item.title}">
+    <h2>${item.title}</h2>
+    <p><strong>Cuisine:</strong> ${item.cuisine}</p>
+    <p><strong>Time:</strong> ${item.readyInMinutes} minutes</p>
+    <p><strong>Serves:</strong> ${item.servings}</p>
+    <h4>Ingredients:</h4>
+    <ul>
+      ${item.ingredients.map(ingredient => `<li>${ingredient}</li>`).join('')}
+    </ul>
+    <a href="${item.sourceUrl}" target="_blank">Full recipe</a>
+    `
+
+  // Insert the HTML content into the random recipe section
+  randomRecipeCard.innerHTML = recipeHTML
+  container.appendChild(randomRecipeCard)
+}
+
+randomRecipeBtn.addEventListener('click', () => {
+  clearActiveButtons()
+  getRandomRecipe(recipes)
+})
+
 
 // Technigo Recipe block
 const recipes = [
@@ -309,3 +349,4 @@ loadRecipes(recipes)
 filterChoice()
 
 sortChoice()
+
