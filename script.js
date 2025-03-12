@@ -10,6 +10,10 @@ const randomRecipeBtn = document.getElementById('random-recipe-btn')
 
 const container = document.getElementById("js-recipe-container")
 
+// API RESOURCES
+const randomURL = "https://api.spoonacular.com/recipes/random?apiKey=2c9fdce04f884694b4cef3682f7a3bba"
+
+
 //Helper functions
 const updateMessage = (message) => {
   messageBox.innerHTML = '';  // Clear the message box
@@ -40,7 +44,7 @@ const filterChoice = () => {
     clearActiveButtons()
     pickMexicanFilter.classList.add("active")
     updateMessage("Yes. The answer is always tacos")
-    const filteredRecipes = recipes.filter(items => items.cuisine.toLowerCase() === "mexican")
+    const filteredRecipes = manualRecipes.filter(items => items.cuisine.toLowerCase() === "mexican")
     if (filteredRecipes.length === 0) {
       displayNoResultsMessage("No recipes found for Mexican cuisine")
     } else {
@@ -52,7 +56,7 @@ const filterChoice = () => {
     clearActiveButtons()
     pickMediterraneanFilter.classList.add("active")
     updateMessage("They say Mediterranean is the healthiest diet")
-    const filteredRecipes = recipes.filter(items => items.cuisine.toLowerCase() === "mediterranean")
+    const filteredRecipes = manualRecipes.filter(items => items.cuisine.toLowerCase() === "mediterranean")
     if (filteredRecipes.length === 0) {
       displayNoResultsMessage("No recipes found for Mediterranean cuisine")
     } else {
@@ -64,7 +68,7 @@ const filterChoice = () => {
     clearActiveButtons()
     pickAsianFilter.classList.add("active")
     updateMessage("你选择了中文")
-    const filteredRecipes = recipes.filter(items => items.cuisine.toLowerCase() === "asian")
+    const filteredRecipes = manualRecipes.filter(items => items.cuisine.toLowerCase() === "asian")
     if (filteredRecipes.length === 0) {
       displayNoResultsMessage("No recipes found for Asian cuisine")
     } else {
@@ -82,65 +86,108 @@ const sortChoice = () => {
     // clearActiveButtons()
     ascendingButton.classList.add("active")
     updateMessage("What's the rush?")
-    loadRecipes([...recipes].sort((a, b) => a.readyInMinutes - b.readyInMinutes))
+    loadRecipes([...manualRecipes].sort((a, b) => a.readyInMinutes - b.readyInMinutes))
   })
 
   descendingButton.addEventListener("click", () => {
     // clearActiveButtons()
     descendingButton.classList.add("active")
     updateMessage("Slow and steady, made with love")
-    loadRecipes([...recipes].sort((a, b) => b.readyInMinutes - a.readyInMinutes))
+    loadRecipes([...manualRecipes].sort((a, b) => b.readyInMinutes - a.readyInMinutes))
   })
 }
 
 
-// Function to get a random recipe
-const getRandomRecipe = (recipesArray) => {
-  const randomIndex = Math.floor(Math.random() * recipesArray.length)
-  const randomRecipe = recipesArray[randomIndex];
-  
-  displayRandomRecipe(randomRecipe)
+          // // Function to get a random recipe
+          // const getRandomRecipe = (recipesArray) => {
+          //   const randomIndex = Math.floor(Math.random() * recipesArray.length)
+          //   const randomRecipe = recipesArray[randomIndex];
+            
+          //   displayRandomRecipe(randomRecipe)
+          // }
+
+          // const displayRandomRecipe = (item) => {
+          //   const randomRecipeCard = document.createElement('article')
+          //   randomRecipeCard.classList.add('recipe-cards')
+
+          //   container.innerHTML = '' 
+            
+          //   const recipeHTML = `
+          //       <img src="./assets/image.png" alt="${item.title}">
+          //       <div class="recipe-title">
+          //         <h3>${item.title}</h3>
+          //       </div>
+          //       <div class="recipe-details">
+          //         <p class="cuisine"><b>Cuisine:</b> ${item.cuisine}</p>
+          //         <p class="time"><b>Time:</b> ${item.readyInMinutes} minutes</p>
+          //         <p class="servings"><b>Serves:</b> ${item.servings}</p>
+          //       </div>
+          //       <div class="ingredients">
+          //         <h4>Ingredients:</h4>
+          //         <ul>
+          //         ${item.ingredients.map(ingredient => `<li>${ingredient}</li>`).join('')}
+          //         </ul>
+          //       </div>
+          //         <a href="${item.sourceUrl}" target="_blank">Full recipe</a>
+          //     `
+
+          //   // Insert the HTML content into the random recipe section
+          //   randomRecipeCard.innerHTML = recipeHTML
+          //   container.appendChild(randomRecipeCard)
+          // }
+
+const fetchRandomData = async () => {
+  const res = await fetch(randomURL)
+  const data = await res.json()
+  console.log("this is fetch", data)
+   displayRandomRecipe(data.recipes[0])
 }
 
-const displayRandomRecipe = (item) => {
-  const randomRecipeCard = document.createElement('article')
-  randomRecipeCard.classList.add('recipe-cards')
+  const displayRandomRecipe = (item) => {
+    console.log("this is func", item)
+    console.log('Image URL:', item.image);
+    console.log('Source URL:', item.sourceUrl);
+    if (!item) {
+      console.error("No recipe item found.");
+      return;
+    }
+    const randomRecipeCard = document.createElement('article')
+    randomRecipeCard.classList.add('recipe-cards')
 
-  container.innerHTML = '' 
-  
-  const recipeHTML = `
-      <img src="./assets/image.png" alt="${item.title}">
-      <div class="recipe-title">
-        <h3>${item.title}</h3>
-      </div>
-      <div class="recipe-details">
-        <p class="cuisine"><b>Cuisine:</b> ${item.cuisine}</p>
-        <p class="time"><b>Time:</b> ${item.readyInMinutes} minutes</p>
-        <p class="servings"><b>Serves:</b> ${item.servings}</p>
-      </div>
-      <div class="ingredients">
-        <h4>Ingredients:</h4>
-        <ul>
-        ${item.ingredients.map(ingredient => `<li>${ingredient}</li>`).join('')}
-        </ul>
-      </div>
-        <a href="${item.sourceUrl}" target="_blank">Full recipe</a>
-    `
-    
-  // Insert the HTML content into the random recipe section
-  randomRecipeCard.innerHTML = recipeHTML
-  container.appendChild(randomRecipeCard)
-}
+      container.innerHTML = '' 
+      
+      const recipeHTML = `
+          <img src=${item.image} alt="${item.title}">
+          <div class="recipe-title">
+            <h3>${item.title}</h3>
+          </div>
+          <div class="recipe-details">
+            <p class="cuisine"><b>Diets:</b> ${item.diets}</p>
+            <p class="time"><b>Time:</b> ${item.readyInMinutes} minutes</p>
+            <p class="servings"><b>Serves:</b> ${item.servings}</p>
+          </div>
+          <div class="ingredients">
+            <h4>Quick Look:</h4>
+            ${item.summary}
+          </div>
+            <a href="${item.sourceUrl}" target="_blank">Full recipe</a>
+        `
+
+      // Insert the HTML content into the random recipe section
+      randomRecipeCard.innerHTML = recipeHTML
+      container.appendChild(randomRecipeCard)
+  }
 
 randomRecipeBtn.addEventListener('click', () => {
   clearActiveButtons()
   updateMessage("I picked this just for you:")
-  getRandomRecipe(recipes)
+  fetchRandomData()
+  // getRandomRecipe(recipes)
 })
 
 
 // Technigo Recipe block
-const recipes = [
+const manualRecipes = [
   {
     id: 1,
     title: "Vegan Lentil Soup",
@@ -351,7 +398,7 @@ const loadRecipes = (recipesArray) => {
   })
 }
 
-loadRecipes(recipes)
+loadRecipes(manualRecipes)
 
 filterChoice()
 
