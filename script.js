@@ -1,4 +1,4 @@
-//DOM selectors
+// DOM selectors
 const messageBox = document.getElementById("message")
 
 const pickAllFilter = document.getElementById("all")
@@ -14,7 +14,7 @@ const container = document.getElementById("js-recipe-container")
 const randomURL = "https://api.spoonacular.com/recipes/random?apiKey=2c9fdce04f884694b4cef3682f7a3bba"
 
 
-//Helper functions
+// Helper functions
 const updateMessage = (message) => {
   messageBox.innerHTML = '';  // Clear the message box
   messageBox.innerHTML += `<p>${message}</p>`
@@ -97,8 +97,7 @@ const sortChoice = () => {
   })
 }
 
-
-          // // Function to get a random recipe
+          /* // // Function to get a random recipe from Manual Rceipes
           // const getRandomRecipe = (recipesArray) => {
           //   const randomIndex = Math.floor(Math.random() * recipesArray.length)
           //   const randomRecipe = recipesArray[randomIndex];
@@ -135,54 +134,62 @@ const sortChoice = () => {
           //   randomRecipeCard.innerHTML = recipeHTML
           //   container.appendChild(randomRecipeCard)
           // }
+          */
 
+
+// Random Recipe from API         
 const fetchRandomData = async () => {
-  const res = await fetch(randomURL)
+  const res = await fetch(randomURL);
+      if (!res.ok) {
+      console.error(`HTTP error! Status: ${res.status}`);
+      return;
+      }
+
   const data = await res.json()
-  console.log("this is fetch", data)
-   displayRandomRecipe(data.recipes[0])
+      if (!data.recipes || data.recipes.length === 0) {
+        console.error("No recipes found in response");
+        return;
+      }
+  displayRandomRecipe(data.recipes[0])
 }
 
   const displayRandomRecipe = (item) => {
-    console.log("this is func", item)
-    console.log('Image URL:', item.image);
-    console.log('Source URL:', item.sourceUrl);
-    if (!item) {
-      console.error("No recipe item found.");
-      return;
-    }
+      if (!item) {
+        console.error("No recipe item found.");
+        return;
+      }
     const randomRecipeCard = document.createElement('article')
     randomRecipeCard.classList.add('recipe-cards')
 
-      container.innerHTML = '' 
+    container.innerHTML = '' 
       
-      const recipeHTML = `
-          <img src=${item.image} alt="${item.title}">
-          <div class="recipe-title">
-            <h3>${item.title}</h3>
-          </div>
-          <div class="recipe-details">
-            <p class="cuisine"><b>Diets:</b> ${item.diets}</p>
-            <p class="time"><b>Time:</b> ${item.readyInMinutes} minutes</p>
-            <p class="servings"><b>Serves:</b> ${item.servings}</p>
-          </div>
-          <div class="ingredients">
-            <h4>Quick Look:</h4>
-            ${item.summary}
-          </div>
-            <a href="${item.sourceUrl}" target="_blank">Full recipe</a>
-        `
-
-      // Insert the HTML content into the random recipe section
+    const recipeHTML = `
+        <img src=${item.image} alt="${item.title}">
+        <div class="recipe-title">
+          <h3>${item.title}</h3>
+        </div>
+        <div class="recipe-details">
+          <p class="cuisine"><b>Diets:</b> ${item.diets}</p>
+          <p class="time"><b>Time:</b> ${item.readyInMinutes} minutes</p>
+          <p class="servings"><b>Serves:</b> ${item.servings}</p>
+        </div>
+        <div class="ingredients">
+          <h4>Quick Look:</h4>
+          ${item.summary}
+        </div>
+          <a href="${item.sourceUrl}" target="_blank">Full recipe</a>
+      `
+    // Create and add recipe card
       randomRecipeCard.innerHTML = recipeHTML
       container.appendChild(randomRecipeCard)
   }
 
+// Random Button Click
 randomRecipeBtn.addEventListener('click', () => {
   clearActiveButtons()
   updateMessage("I picked this just for you:")
   fetchRandomData()
-  // getRandomRecipe(recipes)
+  // getRandomRecipe(recipes) 
 })
 
 
@@ -351,7 +358,7 @@ const manualRecipes = [
 
 // Section for dynamic recipe cards
 const loadRecipes = (recipesArray) => {
-  container.innerHTML = '' //resets the container before load the recipes
+  container.innerHTML = '' 
 
   recipesArray.forEach(item => {
     
