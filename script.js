@@ -35,6 +35,14 @@ const displayNoResultsMessage = (message) => {
 }
 
 // Function to filter by Cuisine
+const filterByCuisine = (cuisine) => {
+  const filteredRecipes = manualRecipes.filter(items => items.cuisine.toLowerCase() === cuisine.toLowerCase())
+    if (filteredRecipes.length === 0) {
+      displayNoResultsMessage(`No recipes found for ${cuisine} cuisine`)
+    } else {
+      loadRecipes(filteredRecipes)
+    }
+}
 const filterChoice = () => {
 
   pickAllFilter.addEventListener("click", () => {
@@ -47,37 +55,22 @@ const filterChoice = () => {
   pickMexicanFilter.addEventListener("click", () => {
     clearActiveButtons()
     activateButton(pickMexicanFilter)
-    updateMessage("Yes. The answer is always tacos")
-    const filteredRecipes = manualRecipes.filter(items => items.cuisine.toLowerCase() === "mexican")
-    if (filteredRecipes.length === 0) {
-      displayNoResultsMessage("No recipes found for Mexican cuisine")
-    } else {
-      loadRecipes(filteredRecipes)
-    }
+    updateMessage("Yes. The answer is always tacos!")
+    filterByCuisine("mexican")
   })
 
   pickMediterraneanFilter.addEventListener("click", () => {
     clearActiveButtons()
     activateButton(pickMediterraneanFilter)
     updateMessage("They say Mediterranean is the healthiest diet")
-    const filteredRecipes = manualRecipes.filter(items => items.cuisine.toLowerCase() === "mediterranean")
-    if (filteredRecipes.length === 0) {
-      displayNoResultsMessage("No recipes found for Mediterranean cuisine")
-    } else {
-      loadRecipes(filteredRecipes)
-    }
+    filterByCuisine("mediterranean")
   })
 
   pickAsianFilter.addEventListener("click", () => {
     clearActiveButtons()
     activateButton(pickAsianFilter)
     updateMessage("你选择了中文")
-    const filteredRecipes = manualRecipes.filter(items => items.cuisine.toLowerCase() === "asian")
-    if (filteredRecipes.length === 0) {
-      displayNoResultsMessage("No recipes found for Asian cuisine")
-    } else {
-      loadRecipes(filteredRecipes)
-    }
+    filterByCuisine("asian")
   })
 }
 
