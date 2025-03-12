@@ -5,7 +5,7 @@ const pickAllFilter = document.getElementById("all")
 const pickMexicanFilter = document.getElementById("mexican")
 const pickMediterraneanFilter = document.getElementById("mediterranean")
 const pickAsianFilter = document.getElementById("asian")
-const buttons = document.querySelectorAll(".filtered, .sorted")
+const filterButtons = document.querySelectorAll(".filtered")
 const randomRecipeBtn = document.getElementById('random-recipe-btn')
 
 const container = document.getElementById("js-recipe-container")
@@ -21,9 +21,13 @@ const updateMessage = (message) => {
 }
 
 const clearActiveButtons = () => {
-  buttons.forEach(button => {
+  filterButtons.forEach(button => {
     button.classList.remove("active")
   })
+}
+
+const activateButton = (button) => {
+  button.classList.add("active")
 }
 
 const displayNoResultsMessage = (message) => {
@@ -35,14 +39,14 @@ const filterChoice = () => {
 
   pickAllFilter.addEventListener("click", () => {
     clearActiveButtons()
-    pickAllFilter.classList.add("active")
+    activateButton(pickAllFilter)
     updateMessage("You eat everything, maybe liver then?")
     loadRecipes(recipes)
   })
 
   pickMexicanFilter.addEventListener("click", () => {
     clearActiveButtons()
-    pickMexicanFilter.classList.add("active")
+    activateButton(pickMexicanFilter)
     updateMessage("Yes. The answer is always tacos")
     const filteredRecipes = manualRecipes.filter(items => items.cuisine.toLowerCase() === "mexican")
     if (filteredRecipes.length === 0) {
@@ -54,7 +58,7 @@ const filterChoice = () => {
 
   pickMediterraneanFilter.addEventListener("click", () => {
     clearActiveButtons()
-    pickMediterraneanFilter.classList.add("active")
+    activateButton(pickMediterraneanFilter)
     updateMessage("They say Mediterranean is the healthiest diet")
     const filteredRecipes = manualRecipes.filter(items => items.cuisine.toLowerCase() === "mediterranean")
     if (filteredRecipes.length === 0) {
@@ -66,7 +70,7 @@ const filterChoice = () => {
 
   pickAsianFilter.addEventListener("click", () => {
     clearActiveButtons()
-    pickAsianFilter.classList.add("active")
+    activateButton(pickAsianFilter)
     updateMessage("你选择了中文")
     const filteredRecipes = manualRecipes.filter(items => items.cuisine.toLowerCase() === "asian")
     if (filteredRecipes.length === 0) {
