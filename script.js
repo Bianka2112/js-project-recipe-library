@@ -49,7 +49,7 @@ const filterChoice = () => {
     clearActiveButtons()
     activateButton(pickAllFilter)
     updateMessage("You eat everything, maybe liver then?")
-    loadRecipes(recipes)
+    loadRecipes(manualRecipes)
   })
 
   pickMexicanFilter.addEventListener("click", () => {
@@ -80,16 +80,14 @@ const sortChoice = () => {
   const descendingButton = document.getElementById("descending")
 
   ascendingButton.addEventListener("click", () => {
-    // clearActiveButtons()
-    ascendingButton.classList.add("active")
+    activateButton(ascendingButton)
     updateMessage("What's the rush?")
     loadRecipes([...manualRecipes].sort((a, b) => a.readyInMinutes - b.readyInMinutes))
   })
 
   descendingButton.addEventListener("click", () => {
-    // clearActiveButtons()
-    descendingButton.classList.add("active")
-    updateMessage("Slow and steady, made with love")
+    activateButton(descendingButton)
+    updateMessage("Slow and steady = made with love")
     loadRecipes([...manualRecipes].sort((a, b) => b.readyInMinutes - a.readyInMinutes))
   })
 }
