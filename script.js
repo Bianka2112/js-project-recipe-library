@@ -12,7 +12,7 @@ const container = document.getElementById("js-recipe-container")
 
 // API RESOURCES
 const randomURL = "https://api.spoonacular.com/recipes/random?apiKey=2c9fdce04f884694b4cef3682f7a3bba"
-
+const recipesURL = "https://api.spoonacular.com/recipes/random?apiKey=2c9fdce04f884694b4cef3682f7a3bba&number=50"
 
 // Helper functions
 const updateMessage = (message) => {
@@ -352,17 +352,37 @@ const manualRecipes = [
 ]
 
 // Section for dynamic recipe cards
-const loadRecipes = (recipesArray) => {
+const fetchAllRecipeData = async () => {
+  const res = await fetch(recipesURL);
+      if (!res.ok) {
+      console.error(`HTTP error! Status: ${res.status}`);
+      return;
+      }
+
+  const data = await res.json()
+      if (!data.recipes || data.recipes.length === 0) {
+        console.error("No recipes found in response");
+        return console.log("data", data);
+      }
+   console.log(data.recipes)
+   loadRecipes(data.recipes)
+}
+      
+const loadRecipes = (array) => {
   container.innerHTML = '' 
 
-  recipesArray.forEach(item => {
+  array.forEach(item => {
+    if (!item) {
+      console.error("No recipe item found.")
+      return
+      }
     
     // Create the recipe card content dynamically
-    const recipeCard = document.createElement('article')
-    recipeCard.classList.add('recipe-cards')
+  const recipeCard = document.createElement('article')
+  recipeCard.classList.add('recipe-cards')
 
     recipeCard.innerHTML = `
-      <img src="./assets/image.png" alt="${item.title}">
+      <img src="${item.image || "./assets/no-image.png"}" alt="${item.title}">
       <div class="recipe-title">
         <h3>${item.title}</h3>
       </div>
@@ -375,21 +395,20 @@ const loadRecipes = (recipesArray) => {
         <h4>Ingredients:</h4>
       </div>
     `
-    // Generate the ingredients list for this recipe
-    const ingredientsList = generateIngredientsList(item.ingredients);
-    
+
     // Function to generate an unordered list of ingredients
-    function generateIngredientsList(ingredients) {
+    const generateIngredientsList = (ingredients) => {
       const ul = document.createElement('ul')
-    
+     
     // Iterate through the ingredients array and create <li> items
     ingredients.forEach(ingredient => {
       const li = document.createElement('li') 
-      li.textContent = ingredient
+      li.textContent = ingredient.original || ingredient.name || "Unknown ingredient"
       ul.appendChild(li)
     })
     return ul
-  }
+    }
+    const ingredientsList = generateIngredientsList(item.extendedIngredients || [])
 
     // Append the ingredients list dynamically
     const ingredientsContainer = recipeCard.querySelector('.ingredients')
@@ -397,10 +416,10 @@ const loadRecipes = (recipesArray) => {
 
     // Append the recipe card to the container
     container.appendChild(recipeCard);
-  })
+    })
 }
 
-loadRecipes(manualRecipes)
+fetchAllRecipeData()
 
 filterChoice()
 
