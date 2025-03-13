@@ -134,19 +134,38 @@ const sortChoice = () => {
 
 // Random Recipe from API         
 const fetchRandomData = async () => {
-  const res = await fetch(randomURL);
-      if (!res.ok) {
-      console.error(`HTTP error! Status: ${res.status}`);
-      return;
-      }
+  try {
+      const res = await fetch(randomURL)
+        if (!res.ok) {
+        console.error(`HTTP error! Status: ${res.status}`)
+        }
 
-  const data = await res.json()
-      if (!data.recipes || data.recipes.length === 0) {
-        console.error("No recipes found in response");
-        return;
-      }
-  displayRandomRecipe(data.recipes[0])
-}
+      const data = await res.json()
+        if (!data.recipes || data.recipes.length === 0) {
+          console.error("No recipes found in response")
+        }
+      displayRandomRecipe(data.recipes[0]) 
+      //randomURL provides only one recipe so this is unique
+    
+    } catch (error) {
+      console.warn("API request failed, loading from localStorage...", error);
+
+        // Try loading from localStorage if API fails
+        const savedData = localStorage.getItem("recipes")
+        if (savedData) {
+            const data = JSON.parse(savedData);
+            console.log("Loaded from localStorage:", data)
+
+            // Pick a random recipe
+            const randomIndex = Math.floor(Math.random() * data.results.length)
+            const randomRecipe = data.results[randomIndex]
+            
+          displayRandomRecipe(randomRecipe)
+        } else {
+            console.error("No recipes found in API or localStorage!");
+        }
+    }
+  }
 
   const displayRandomRecipe = (item) => {
       if (!item) {
@@ -373,8 +392,6 @@ const savedData = localStorage.getItem("recipes");
       } else {
         console.error("No saved recipes found in localStorage!");
     }
-  
-   
   }
      
 const loadRecipes = (array) => {
