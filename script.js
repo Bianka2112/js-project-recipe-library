@@ -15,8 +15,12 @@ const randomURL = "https://api.spoonacular.com/recipes/random?apiKey=2c9fdce04f8
 const recipesURL = "https://api.spoonacular.com/recipes/complexSearch?apiKey=2c9fdce04f884694b4cef3682f7a3bba&number=50&addRecipeInformation=true&cuisine=African,Asian,American,British,Cajun,Caribbean,Chinese,Eastern,European,European,French,German,Greek,Indian,Irish,Italian,Japanese,Jewish,Korean,Latin,American,Mediterranean,Mexican,Middle,Eastern,Nordic,Southern,Spanish,Thai,Vietnamese&fillIngredients=true&addRecipeInstructions=true"
 
 // Helper functions
+const clearContainerHTML = () => {
+  container.innerHTML = ''
+}
+
 const updateMessage = (message) => {
-  messageBox.innerHTML = '';  // Clear the message box
+  messageBox.innerHTML = '' // Clear the message box
   messageBox.innerHTML += `<p>${message}</p>`
 }
 
@@ -92,10 +96,10 @@ const sortChoice = () => {
   })
 }
 
-          /* // // Function to get a random recipe from Manual Rceipes
+    /* // // Function to get a random recipe from Manual Rceipes
           // const getRandomRecipe = (recipesArray) => {
           //   const randomIndex = Math.floor(Math.random() * recipesArray.length)
-          //   const randomRecipe = recipesArray[randomIndex];
+          //   const randomRecipe = recipesArray[randomIndex]
             
           //   displayRandomRecipe(randomRecipe)
           // }
@@ -132,50 +136,53 @@ const sortChoice = () => {
           */
 
 
-// Random Recipe from API         
+// Fetch Random Recipe from API || Local Storage         
 const fetchRandomData = async () => {
   try {
       const res = await fetch(randomURL)
-        if (!res.ok) {
+      if (!res.ok) {
         console.error(`HTTP error! Status: ${res.status}`)
-        }
+        updateMessage("💥 API limit hit! You sunk my battleship 💥 Here is a locally-cached recipe meanwhile we rebuild..")
+      }
 
       const data = await res.json()
-        if (!data.recipes || data.recipes.length === 0) {
-          console.error("No recipes found in response")
-        }
+      if (!data.recipes || data.recipes.length === 0) {
+        console.error("No recipes found in response")
+      }
+
       displayRandomRecipe(data.recipes[0]) 
       //randomURL provides only one recipe so this is unique
     
-    } catch (error) {
-      console.warn("API request failed, loading from localStorage...", error);
+  } catch (error) {
+      console.warn("API request failed, loading from localStorage...", error)
 
-        // Try loading from localStorage if API fails
-        const savedData = localStorage.getItem("recipes")
-        if (savedData) {
-            const data = JSON.parse(savedData);
-            console.log("Loaded from localStorage:", data)
+      const savedData = localStorage.getItem("recipes")
+      if (savedData) {
+        const data = JSON.parse(savedData)
 
-            // Pick a random recipe
-            const randomIndex = Math.floor(Math.random() * data.results.length)
-            const randomRecipe = data.results[randomIndex]
-            
-          displayRandomRecipe(randomRecipe)
-        } else {
-            console.error("No recipes found in API or localStorage!");
-        }
+        const randomIndex = Math.floor(Math.random() * data.results.length)
+        const randomRecipe = data.results[randomIndex]
+      
+      displayRandomRecipe(randomRecipe)
+      console.warn("All hope is not lost!🥳")
+      
+      } else {
+        console.error("No recipes found in API or localStorage! IT'S ALL BROKEN")
+      }
     }
   }
 
+// Function to Create/Display Random Recipe
   const displayRandomRecipe = (item) => {
       if (!item) {
-        console.error("No recipe item found.");
-        return;
+        console.error("No recipe item found.")
+        return
       }
+      
     const randomRecipeCard = document.createElement('article')
-    randomRecipeCard.classList.add('recipe-cards')
+          randomRecipeCard.classList.add('recipe-cards')
 
-    container.innerHTML = '' 
+    clearContainerHTML()
       
     const recipeHTML = `
         <img src=${item.image} alt="${item.title}">
@@ -193,7 +200,7 @@ const fetchRandomData = async () => {
         </div>
           <a href="${item.sourceUrl}" target="_blank">See Full Recipe</a>
       `
-    // Create and add recipe card
+    // Fill and display this recipe card 
       randomRecipeCard.innerHTML = recipeHTML
       container.appendChild(randomRecipeCard)
   }
@@ -202,8 +209,7 @@ const fetchRandomData = async () => {
 randomRecipeBtn.addEventListener('click', () => {
   clearActiveButtons()
   updateMessage("I picked this just for you:")
-  fetchRandomData()
-  // getRandomRecipe(recipes) 
+  fetchRandomData() 
 })
 
 
@@ -370,80 +376,83 @@ const manualRecipes = [
   }
 ]
 
-// // Section for dynamic recipe cards
-// const fetchAllRecipeData = async () => {
-//   const res = await fetch(recipesURL);
-//       if (!res.ok) {
-//       console.error(`HTTP error! Status: ${res.status}`);
-//       return;
-//       }
-
-//   const data = await res.json()
-//       if (!data.results || data.results.length === 0) {
-//         console.error("No recipes found in response")
-//       }
+// Fetch Default Recipes from API || Local Storage
 const fetchAllRecipeData = async () => {
-const savedData = localStorage.getItem("recipes");
-    if (savedData) {
-        const data = JSON.parse(savedData);
-        console.log("Loaded from localStorage:", data);
-        loadRecipes(data.results);  // Use this instead of API fetch
+  try {
+      const res = await fetch(recipesURL)
+      if (!res.ok) {
+        console.error(`HTTP error! Status: ${res.status}`)
+        alert("💥 API limit hit! You sunk my battleship 💥 Here are some locally-cached recipes meanwhile we rebuild..")
+      }
+
+      const data = await res.json()
+      if (!data.results || data.results.length === 0) {
+        console.error("No results found in response")
+      }
+
+      loadRecipes(data.results) 
+
+  } catch (error) {
+      console.warn("API request failed, loading from localStorage...", error)
+
+      const savedData = localStorage.getItem("recipes")
+      if (savedData) {
+        const data = JSON.parse(savedData)
+
+        loadRecipes(data.results)
         filterChoice(data.results)
+
       } else {
-        console.error("No saved recipes found in localStorage!");
+        console.error("No saved recipes found in localStorage!")
+      }
     }
   }
-     
+// Function for all default recipes    
 const loadRecipes = (array) => {
-  container.innerHTML = '' 
-
   array.forEach(item => {
     if (!item) {
       console.error("No recipe item found.")
       return
-      }
-    
-    // Create the recipe card content dynamically
-  const recipeCard = document.createElement('article')
-  recipeCard.classList.add('recipe-cards')
+    }
+
+    const recipeCard = document.createElement('article')
+    recipeCard.classList.add('recipe-cards')
 
     recipeCard.innerHTML = `
-      <img src="${item.image || "assets/no-image.png"}" alt="${item.title}">
-      <div class="recipe-title">
-        <h3>${item.title}</h3>
-      </div>
-      <div class="recipe-details">
-        <p class="cuisine"><b>Cuisine:</b> ${item.cuisine}</p>
-        <p class="time"><b>Time:</b> ${item.readyInMinutes} minutes</p>
-        <p class="servings"><b>Serves:</b> ${item.servings}</p>
-      </div>
-      <div class="ingredients">
-        <h4>Ingredients:</h4>
-      </div>
-      <a href="${item.sourceUrl}" target="_blank">See Full Recipe</a>
+    <img src="${item.image || "assets/no-image.png"}" alt="${item.title}">
+    <div class="recipe-title">
+      <h3>${item.title}</h3>
+    </div>
+    <div class="recipe-details">
+      <p class="cuisine"><b>Cuisine:</b> ${item.cuisine}</p>
+      <p class="time"><b>Time:</b> ${item.readyInMinutes} minutes</p>
+      <p class="servings"><b>Serves:</b> ${item.servings}</p>
+    </div>
+    <div class="ingredients">
+      <h4>Ingredients:</h4>
+    </div>
+    <a href="${item.sourceUrl}" target="_blank">See Full Recipe</a>
     `
-
+    container.appendChild(recipeCard)
+    
     // Function to generate an unordered list of ingredients
     const generateIngredientsList = (ingredients) => {
+      
       const ul = document.createElement('ul')
-     
-    // Iterate through the ingredients array and create <li> items
-    ingredients.forEach(ingredient => {
-      const li = document.createElement('li') 
+      
+      ingredients.forEach(ingredient => {
+      const li = document.createElement("li") 
       li.textContent = ingredient.original || ingredient.name || "Unknown ingredient"
       ul.appendChild(li)
-    })
-    return ul
+      })
+      return ul
     }
     const ingredientsList = generateIngredientsList(item.extendedIngredients || [])
 
-    // Append the ingredients list dynamically
-    const ingredientsContainer = recipeCard.querySelector('.ingredients')
+    const ingredientsContainer = recipeCard.querySelector(".ingredients")
     ingredientsContainer.appendChild(ingredientsList)
 
-    // Append the recipe card to the container
-    container.appendChild(recipeCard);
-    })
+  })
 }
 
 fetchAllRecipeData()
