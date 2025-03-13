@@ -12,7 +12,7 @@ const container = document.getElementById("js-recipe-container")
 
 // API RESOURCES
 const randomURL = "https://api.spoonacular.com/recipes/random?apiKey=2c9fdce04f884694b4cef3682f7a3bba"
-const recipesURL = "https://api.spoonacular.com/recipes/random?apiKey=2c9fdce04f884694b4cef3682f7a3bba&number=50"
+const recipesURL = "https://api.spoonacular.com/recipes/complexSearch?apiKey=2c9fdce04f884694b4cef3682f7a3bba&number=50&addRecipeInformation=true&cuisine=African,Asian,American,British,Cajun,Caribbean,Chinese,Eastern,European,European,French,German,Greek,Indian,Irish,Italian,Japanese,Jewish,Korean,Latin,American,Mediterranean,Mexican,Middle,Eastern,Nordic,Southern,Spanish,Thai,Vietnamese&fillIngredients=true&addRecipeInstructions=true"
 
 // Helper functions
 const updateMessage = (message) => {
@@ -35,8 +35,8 @@ const displayNoResultsMessage = (message) => {
 }
 
 // Function to filter by Cuisine
-const filterByCuisine = (cuisine) => {
-  const filteredRecipes = manualRecipes.filter(items => items.cuisine.toLowerCase() === cuisine.toLowerCase())
+const filterByCuisine = (recipesArray, cuisine) => {
+  const filteredRecipes = recipesArray.filter(items => items.cuisine.toLowerCase() === cuisine.toLowerCase())
     if (filteredRecipes.length === 0) {
       displayNoResultsMessage(`No recipes found for ${cuisine} cuisine`)
     } else {
@@ -49,7 +49,7 @@ const filterChoice = () => {
     clearActiveButtons()
     activateButton(pickAllFilter)
     updateMessage("You eat everything, maybe liver then?")
-    loadRecipes(manualRecipes)
+    fetchAllRecipeData()
   })
 
   pickMexicanFilter.addEventListener("click", () => {
@@ -172,7 +172,7 @@ const fetchRandomData = async () => {
           <h4>Quick Look:</h4>
           ${item.summary}
         </div>
-          <a href="${item.sourceUrl}" target="_blank">Full recipe</a>
+          <a href="${item.sourceUrl}" target="_blank">See Full Recipe</a>
       `
     // Create and add recipe card
       randomRecipeCard.innerHTML = recipeHTML
@@ -351,23 +351,32 @@ const manualRecipes = [
   }
 ]
 
-// Section for dynamic recipe cards
-const fetchAllRecipeData = async () => {
-  const res = await fetch(recipesURL);
-      if (!res.ok) {
-      console.error(`HTTP error! Status: ${res.status}`);
-      return;
-      }
+// // Section for dynamic recipe cards
+// const fetchAllRecipeData = async () => {
+//   const res = await fetch(recipesURL);
+//       if (!res.ok) {
+//       console.error(`HTTP error! Status: ${res.status}`);
+//       return;
+//       }
 
-  const data = await res.json()
-      if (!data.recipes || data.recipes.length === 0) {
-        console.error("No recipes found in response");
-        return console.log("data", data);
-      }
-   console.log(data.recipes)
-   loadRecipes(data.recipes)
-}
-      
+//   const data = await res.json()
+//       if (!data.results || data.results.length === 0) {
+//         console.error("No recipes found in response")
+//       }
+const fetchAllRecipeData = async () => {
+const savedData = localStorage.getItem("recipes");
+    if (savedData) {
+        const data = JSON.parse(savedData);
+        console.log("Loaded from localStorage:", data);
+        loadRecipes(data.results);  // Use this instead of API fetch
+        filterChoice(data.results)
+      } else {
+        console.error("No saved recipes found in localStorage!");
+    }
+  
+   
+  }
+     
 const loadRecipes = (array) => {
   container.innerHTML = '' 
 
@@ -382,7 +391,7 @@ const loadRecipes = (array) => {
   recipeCard.classList.add('recipe-cards')
 
     recipeCard.innerHTML = `
-      <img src="${item.image || "./assets/no-image.png"}" alt="${item.title}">
+      <img src="${item.image || "assets/no-image.png"}" alt="${item.title}">
       <div class="recipe-title">
         <h3>${item.title}</h3>
       </div>
@@ -394,6 +403,7 @@ const loadRecipes = (array) => {
       <div class="ingredients">
         <h4>Ingredients:</h4>
       </div>
+      <a href="${item.sourceUrl}" target="_blank">See Full Recipe</a>
     `
 
     // Function to generate an unordered list of ingredients
