@@ -12,7 +12,8 @@ const container = document.getElementById("js-recipe-container")
 
 // API RESOURCES
 const randomURL = "https://api.spoonacular.com/recipes/random?apiKey=2c9fdce04f884694b4cef3682f7a3bba"
-const recipesURL = "https://api.spoonacular.com/recipes/complexSearch?apiKey=2c9fdce04f884694b4cef3682f7a3bba&number=50&addRecipeInformation=true&cuisine=African,Asian,American,British,Cajun,Caribbean,Chinese,Eastern,European,European,French,German,Greek,Indian,Irish,Italian,Japanese,Jewish,Korean,Latin,American,Mediterranean,Mexican,Middle,Eastern,Nordic,Southern,Spanish,Thai,Vietnamese&fillIngredients=true&addRecipeInstructions=true"
+const recipesURL = "https://api.spoonacular.com/recipes/complexSearch?apiKey=2c9fdce04f884694b4cef3682f7a3bba&number=20&addRecipeInformation=true&cuisine=African,Asian,American,British,Cajun,Caribbean,Chinese,Eastern,European,European,French,German,Greek,Indian,Irish,Italian,Japanese,Jewish,Korean,Latin,American,Mediterranean,Mexican,Middle,Eastern,Nordic,Southern,Spanish,Thai,Vietnamese&fillIngredients=true&addRecipeInstructions=true"
+let fetchedRecipesArray = []
 
 // Helper functions
 const clearContainerHTML = () => {
@@ -35,25 +36,130 @@ const activateButton = (button) => {
 }
 
 const displayNoResultsMessage = (message) => {
-  messageBox.innerHTML = `<p>${message}</p>`
+  messageBox.innerHTML += `<p>${message}</p>`
+}
+
+// Fetch Default Recipes from API || Local Storage
+const fetchAllRecipeData = async () => {
+  try {
+      const res = await fetch(recipesURL)
+      if (!res.ok) {
+        console.error(`HTTP error! Status: ${res.status}`)
+      }
+
+      const data = await res.json()
+      if (!data.results || data.results.length === 0) {
+        console.error("No results found in API response")
+      }
+
+      fetchedRecipesArray = data.results
+      loadRecipes(fetchedRecipesArray)
+      return fetchedRecipesArray || []
+
+  } catch (error) {
+    console.warn("API request failed, loading from localStorage...", error)
+   
+    const savedData = localStorage.getItem("recipes")
+    if (savedData) {
+      const data = JSON.parse(savedData)
+
+      fetchedRecipesArray = data.results
+      loadRecipes(fetchedRecipesArray)
+      filterChoice(data.results)
+
+    } else {
+      console.error("No saved recipes found in localStorage! loading from local file...", error)
+
+      const recipes = window.savedRecipesData.results || []
+      loadRecipes(recipes)
+    }
+  }
+}
+  
+// Function for all default recipes    
+const loadRecipes = (array) => {
+
+  if (!Array.isArray(array) || array.length === 0) {
+    console.warn("No recipes to load bc array N/A.");
+    displayNoResultsMessage("No recipes available.")
+    return
+  }
+  
+  clearContainerHTML()
+
+  array.forEach(item => {
+    if (!item) {
+      console.error("No recipe item found.")
+      return
+    }
+
+    const recipeCard = document.createElement('article')
+    recipeCard.classList.add('recipe-cards')
+
+    recipeCard.innerHTML = `
+    <img src="${item.image || "assets/no-image.png"}" alt="${item.title}">
+    <div class="recipe-title">
+      <h3>${item.title}</h3>
+    </div>
+    <div class="recipe-details">
+      <p class="cuisine"><b>Cuisine:</b> ${item.cuisines}</p>
+      <p class="time"><b>Time:</b> ${item.readyInMinutes} minutes</p>
+      <p class="servings"><b>Serves:</b> ${item.servings}</p>
+    </div>
+    <div class="ingredients">
+      <h4>Ingredients:</h4>
+    </div>
+    <a href="${item.sourceUrl}" target="_blank">See Full Recipe</a>
+    `
+    container.appendChild(recipeCard)
+    
+    // Function to generate an unordered list of ingredients
+    const generateIngredientsList = (ingredients) => {
+      
+      const ul = document.createElement('ul')
+      
+      ingredients.forEach(ingredient => {
+      const li = document.createElement("li") 
+      li.textContent = ingredient.original || ingredient.name || "Unknown ingredient"
+      ul.appendChild(li)
+      })
+      return ul
+    }
+    const ingredientsList = generateIngredientsList(item.extendedIngredients || [])
+
+    const ingredientsContainer = recipeCard.querySelector(".ingredients")
+    ingredientsContainer.appendChild(ingredientsList)
+
+  })
 }
 
 // Function to filter by Cuisine
-const filterByCuisine = (recipesArray, cuisine) => {
-  const filteredRecipes = recipesArray.filter(items => items.cuisine.toLowerCase() === cuisine.toLowerCase())
-    if (filteredRecipes.length === 0) {
+const filterByCuisine = async (cuisine) => {
+  const recipesArray = await fetchAllRecipeData()
+
+  if (!Array.isArray(fetchedRecipesArray)) {
+    console.error("Error: fetchedRecipesArray is undefined or not an array.")
+    return
+  }
+  
+  const filteredRecipes = fetchedRecipesArray.filter(item => {
+    if (!item.cuisines || item.cuisines.length === 0) return false  // Handle missing cuisine data
+    return item.cuisines.some(c => c.toLowerCase() === cuisine.toLowerCase()) // Check within array
+  })    
+  
+  if (filteredRecipes.length === 0) {
       displayNoResultsMessage(`No recipes found for ${cuisine} cuisine`)
     } else {
       loadRecipes(filteredRecipes)
     }
 }
-const filterChoice = () => {
+const filterChoice = (recipesArray) => {
 
   pickAllFilter.addEventListener("click", () => {
     clearActiveButtons()
     activateButton(pickAllFilter)
     updateMessage("You eat everything, maybe liver then?")
-    fetchAllRecipeData()
+    loadRecipes(fetchedRecipesArray)
   })
 
   pickMexicanFilter.addEventListener("click", () => {
@@ -86,13 +192,13 @@ const sortChoice = () => {
   ascendingButton.addEventListener("click", () => {
     activateButton(ascendingButton)
     updateMessage("What's the rush?")
-    loadRecipes([...manualRecipes].sort((a, b) => a.readyInMinutes - b.readyInMinutes))
+    loadRecipes([...fetchedRecipesArray].sort((a, b) => a.readyInMinutes - b.readyInMinutes))
   })
 
   descendingButton.addEventListener("click", () => {
     activateButton(descendingButton)
     updateMessage("Slow and steady = made with love")
-    loadRecipes([...manualRecipes].sort((a, b) => b.readyInMinutes - a.readyInMinutes))
+    loadRecipes([...fetchedRecipesArray].sort((a, b) => b.readyInMinutes - a.readyInMinutes))
   })
 }
 
@@ -375,85 +481,6 @@ const manualRecipes = [
     popularity: 80
   }
 ]
-
-// Fetch Default Recipes from API || Local Storage
-const fetchAllRecipeData = async () => {
-  try {
-      const res = await fetch(recipesURL)
-      if (!res.ok) {
-        console.error(`HTTP error! Status: ${res.status}`)
-        alert("💥 API limit hit! You sunk my battleship 💥 Here are some locally-cached recipes meanwhile we rebuild..")
-      }
-
-      const data = await res.json()
-      if (!data.results || data.results.length === 0) {
-        console.error("No results found in response")
-      }
-
-      loadRecipes(data.results) 
-
-  } catch (error) {
-      console.warn("API request failed, loading from localStorage...", error)
-
-      const savedData = localStorage.getItem("recipes")
-      if (savedData) {
-        const data = JSON.parse(savedData)
-
-        loadRecipes(data.results)
-        filterChoice(data.results)
-
-      } else {
-        console.error("No saved recipes found in localStorage!")
-      }
-    }
-  }
-// Function for all default recipes    
-const loadRecipes = (array) => {
-  array.forEach(item => {
-    if (!item) {
-      console.error("No recipe item found.")
-      return
-    }
-
-    const recipeCard = document.createElement('article')
-    recipeCard.classList.add('recipe-cards')
-
-    recipeCard.innerHTML = `
-    <img src="${item.image || "assets/no-image.png"}" alt="${item.title}">
-    <div class="recipe-title">
-      <h3>${item.title}</h3>
-    </div>
-    <div class="recipe-details">
-      <p class="cuisine"><b>Cuisine:</b> ${item.cuisine}</p>
-      <p class="time"><b>Time:</b> ${item.readyInMinutes} minutes</p>
-      <p class="servings"><b>Serves:</b> ${item.servings}</p>
-    </div>
-    <div class="ingredients">
-      <h4>Ingredients:</h4>
-    </div>
-    <a href="${item.sourceUrl}" target="_blank">See Full Recipe</a>
-    `
-    container.appendChild(recipeCard)
-    
-    // Function to generate an unordered list of ingredients
-    const generateIngredientsList = (ingredients) => {
-      
-      const ul = document.createElement('ul')
-      
-      ingredients.forEach(ingredient => {
-      const li = document.createElement("li") 
-      li.textContent = ingredient.original || ingredient.name || "Unknown ingredient"
-      ul.appendChild(li)
-      })
-      return ul
-    }
-    const ingredientsList = generateIngredientsList(item.extendedIngredients || [])
-
-    const ingredientsContainer = recipeCard.querySelector(".ingredients")
-    ingredientsContainer.appendChild(ingredientsList)
-
-  })
-}
 
 fetchAllRecipeData()
 

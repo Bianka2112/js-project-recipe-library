@@ -1,7 +1,4 @@
-// 20250313180915
-// https://api.spoonacular.com/recipes/complexSearch?apiKey=2c9fdce04f884694b4cef3682f7a3bba&number=50&addRecipeInformation=true&cuisine=African,Asian,American,British,Cajun,Caribbean,Chinese,Eastern,European,European,French,German,Greek,Indian,Irish,Italian,Japanese,Jewish,Korean,Latin,American,Mediterranean,Mexican,Middle,Eastern,Nordic,Southern,Spanish,Thai,Vietnamese&fillIngredients=true&addRecipeInstructions=true
-
-const localRecipesData = {
+window.savedRecipesData = {
   "results": [
     {
       "id": 782601,
