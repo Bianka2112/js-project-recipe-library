@@ -273,12 +273,12 @@ const fetchRandomData = async () => {
   try {
       const res = await fetch(randomURL)
       if (!res.ok) {
-        console.error(`HTTP error! Status: ${res.status}`)
+        throw new Error(`HTTP error! Status: ${res.status}`)
       }
 
       const data = await res.json()
-      if (!data.recipes || data.recipes.length === 0) {
-        console.error("No recipes found in response")
+      if (!data.results || data.results.length === 0) {
+        throw new Error("No results found in API response")
       }
 
       displayRandomRecipe(data.recipes[0]) 
