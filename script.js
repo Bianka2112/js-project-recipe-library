@@ -69,20 +69,27 @@ const fetchAllRecipeData = async () => {
       filterChoice(fetchedRecipesArray)
 
     } else {
-      console.error("No saved recipes found in localStorage! loading from local file...", parseError)
+      console.error("No saved recipes found in localStorage! loading from local file...")
   }
 }
       if (window.savedRecipesData?.results?.length) {
-      const recipes = window.savedRecipesData.results || []
-      loadRecipes(recipes)
+        const savedData = window.savedRecipesData.results || []
+
+      fetchedRecipesArray = savedData
+      loadRecipes(fetchedRecipesArray)
       console.warn("All hope is not lost!🥳")
     
       }
 
       if (typeof window.savedRecipesData === "string") {
         try {
-          window.savedRecipesData = JSON.parse(window.savedRecipesData);
-          console.log("✅ Parsed `window.savedRecipesData` successfully.");
+          window.savedRecipesData = JSON.parse(window.savedRecipesData)
+          console.log("✅ Parsed `window.savedRecipesData` successfully.")
+
+          fetchedRecipesArray = savedData
+      loadRecipes(fetchedRecipesArray)
+      console.warn("All hope is not lost!🥳")
+
         } catch (jsonError) {
           console.error("❌ Failed to parse `window.savedRecipesData`:", jsonError);
           return [];
