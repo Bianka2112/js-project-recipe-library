@@ -5,8 +5,8 @@ const pickAllFilter = document.getElementById("all")
 const pickMexicanFilter = document.getElementById("mexican")
 const pickMediterraneanFilter = document.getElementById("mediterranean")
 const pickAsianFilter = document.getElementById("asian")
-const filterButtons = document.querySelectorAll(".filtered")
-const randomRecipeBtn = document.getElementById('random-recipe-btn')
+const filterButtons = document.querySelectorAll(".filtered, .sorted, #random-recipe-btn")
+const randomRecipeBtn = document.getElementById("random-recipe-btn")
 
 const container = document.getElementById("js-recipe-container")
 
@@ -153,7 +153,8 @@ const filterByCuisine = async (cuisine) => {
       loadRecipes(filteredRecipes)
     }
 }
-const filterChoice = (recipesArray) => {
+// Filter Buttons Click
+const filterChoice = () => {
 
   pickAllFilter.addEventListener("click", () => {
     clearActiveButtons()
@@ -190,12 +191,14 @@ const sortChoice = () => {
   const descendingButton = document.getElementById("descending")
 
   ascendingButton.addEventListener("click", () => {
+    clearActiveButtons()
     activateButton(ascendingButton)
     updateMessage("What's the rush?")
     loadRecipes([...fetchedRecipesArray].sort((a, b) => a.readyInMinutes - b.readyInMinutes))
   })
 
   descendingButton.addEventListener("click", () => {
+    clearActiveButtons()
     activateButton(descendingButton)
     updateMessage("Slow and steady = made with love")
     loadRecipes([...fetchedRecipesArray].sort((a, b) => b.readyInMinutes - a.readyInMinutes))
@@ -314,6 +317,7 @@ const fetchRandomData = async () => {
 // Random Button Click
 randomRecipeBtn.addEventListener('click', () => {
   clearActiveButtons()
+  activateButton(randomRecipeBtn)
   updateMessage("I picked this just for you:")
   fetchRandomData() 
 })

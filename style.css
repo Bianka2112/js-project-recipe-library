@@ -38,7 +38,7 @@ button.active {
   color: white;
 }
 
-button.sorted {
+button.sorted:not(.active) {
   background: #FFECEA;
 }
 

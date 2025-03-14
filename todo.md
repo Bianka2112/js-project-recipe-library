@@ -1,5 +1,3 @@
-[] FIX filter/sort logic/params!!
-
 [] message if no filters match
 [] correct active state sort btns
 
@@ -9,6 +7,7 @@
 [] user search or click for recipe steps _(stretch goal 4)_
 [] back to top button (wishlist)
 
+[x] FIX filter/sort logic/params!!
 [x] random btn
 [x] random api
 [x] local storage cache _(stretch goal 2)_
