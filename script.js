@@ -251,7 +251,7 @@ const fetchRandomData = async () => {
         const data = JSON.parse(savedData)
 
         const randomIndex = Math.floor(Math.random() * data.results.length)
-        const randomRecipe = data.results[randomIndex]
+        const randomRecipe = fetchedRecipesArray[randomIndex]
       
       displayRandomRecipe(randomRecipe)
       console.warn("All hope is not lost!🥳 localStorage loaded")
@@ -266,7 +266,6 @@ const fetchRandomData = async () => {
   const displayRandomRecipe = (item) => {
       if (!item) {
         console.error("No recipe item found.")
-        return
       }
       
     const randomRecipeCard = document.createElement('article')
