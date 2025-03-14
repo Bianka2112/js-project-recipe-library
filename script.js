@@ -32,7 +32,7 @@ const clearActiveButtons = () => {
 }
 
 const activateButton = (button) => {
-  button.classList.add("active")
+  button.classList.toggle("active")
 }
 
 const displayNoResultsMessage = (message) => {
@@ -44,48 +44,64 @@ const fetchAllRecipeData = async () => {
   try {
       const res = await fetch(recipesURL)
       if (!res.ok) {
-        console.error(`HTTP error! Status: ${res.status}`)
+        throw new Error(`HTTP error! Status: ${res.status}`)
       }
 
       const data = await res.json()
       if (!data.results || data.results.length === 0) {
-        console.error("No results found in API response")
+        throw new Error("No results found in API response")
       }
 
       fetchedRecipesArray = data.results
+
       loadRecipes(fetchedRecipesArray)
-      return fetchedRecipesArray || []
+      filterChoice(fetchedRecipesArray)
 
   } catch (error) {
     console.warn("API request failed, loading from localStorage...", error)
    
     const savedData = localStorage.getItem("recipes")
-    if (savedData) {
-      const data = JSON.parse(savedData)
+      if (savedData) {
+        const data = JSON.parse(savedData)
 
       fetchedRecipesArray = data.results
       loadRecipes(fetchedRecipesArray)
-      filterChoice(data.results)
+      filterChoice(fetchedRecipesArray)
 
     } else {
-      console.error("No saved recipes found in localStorage! loading from local file...", error)
-
-      const recipes = window.savedRecipesData.results || []
-      loadRecipes(recipes)
-    }
+      console.error("No saved recipes found in localStorage! loading from local file...", parseError)
   }
 }
-  
+      if (window.savedRecipesData?.results?.length) {
+      const recipes = window.savedRecipesData.results || []
+      loadRecipes(recipes)
+      console.warn("All hope is not lost!🥳")
+    
+      }
+
+      if (typeof window.savedRecipesData === "string") {
+        try {
+          window.savedRecipesData = JSON.parse(window.savedRecipesData);
+          console.log("✅ Parsed `window.savedRecipesData` successfully.");
+        } catch (jsonError) {
+          console.error("❌ Failed to parse `window.savedRecipesData`:", jsonError);
+          return [];
+        }
+        console.error("No recipes found in anything! IT'S ALL BROKEN")
+        return []
+      }
+    }
+    
 // Function for all default recipes    
 const loadRecipes = (array) => {
+
+  clearContainerHTML()
 
   if (!Array.isArray(array) || array.length === 0) {
     console.warn("No recipes to load bc array N/A.");
     displayNoResultsMessage("No recipes available.")
     return
   }
-  
-  clearContainerHTML()
 
   array.forEach(item => {
     if (!item) {
@@ -95,6 +111,7 @@ const loadRecipes = (array) => {
 
     const recipeCard = document.createElement('article')
     recipeCard.classList.add('recipe-cards')
+
 
     recipeCard.innerHTML = `
     <img src="${item.image || "assets/no-image.png"}" alt="${item.title}">
@@ -135,7 +152,6 @@ const loadRecipes = (array) => {
 
 // Function to filter by Cuisine
 const filterByCuisine = async (cuisine) => {
-  const recipesArray = await fetchAllRecipeData()
 
   if (!Array.isArray(fetchedRecipesArray)) {
     console.error("Error: fetchedRecipesArray is undefined or not an array.")
@@ -251,7 +267,6 @@ const fetchRandomData = async () => {
       const res = await fetch(randomURL)
       if (!res.ok) {
         console.error(`HTTP error! Status: ${res.status}`)
-        updateMessage("💥 API limit hit! You sunk my battleship 💥 Here is a locally-cached recipe meanwhile we rebuild..")
       }
 
       const data = await res.json()
@@ -318,7 +333,11 @@ const fetchRandomData = async () => {
 randomRecipeBtn.addEventListener('click', () => {
   clearActiveButtons()
   activateButton(randomRecipeBtn)
-  updateMessage("I picked this just for you:")
+  setTimeout(() => {
+    randomRecipeBtn.classList.remove("active")
+  }, 10000)
+  updateMessage("I picked this just for you! Are you surprised?")
+
   fetchRandomData() 
 })
 

@@ -27,6 +27,7 @@ button {
   border: 0;
   text-decoration: none;
   cursor: pointer;
+  transition: background 1.5s ease, color 1.5s ease
 }
 
 button:hover {
@@ -94,4 +95,20 @@ a {
   color: #0018A4;
 }
 
+#random-recipe-btn.active {
+  background: linear-gradient(45deg, #ff0000, #ff7300, #ffeb00, #47ff00, #00ffb7, #0018A4, #7a00ff);
+  background-size: 200% 200%;
+  color: white;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); 
+  padding: 15px 20px;
+  font-weight: bold;
+  border-radius: 30px;
+  animation: gradientMove 5s ease-in-out infinite;
+}
+
+@keyframes gradientMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
 
