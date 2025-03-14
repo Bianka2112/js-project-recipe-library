@@ -27,7 +27,7 @@ button {
   border: 0;
   text-decoration: none;
   cursor: pointer;
-  transition: background 1.5s ease, color 1.5s ease
+  transition: background 1s ease, color 1s ease
 }
 
 button:hover {
