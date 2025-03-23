@@ -13,6 +13,7 @@ const container = document.getElementById("js-recipe-container")
 // API RESOURCES
 const apiKey = "2c9fdce04f884694b4cef3682f7a3bba"
 const randomURL = `https://api.spoonacular.com/recipes/random?apiKey=${apiKey}`
+const testURL = `https://api.spoonacular.com/recipes/random?apiKey=${apiKey}&number=20`
 const recipesURL = `https://api.spoonacular.com/recipes/complexSearch?apiKey=${apiKey}&number=20&addRecipeInformation=true&cuisine=African,Asian,American,British,Cajun,Caribbean,Chinese,Eastern,European,European,French,German,Greek,Indian,Irish,Italian,Japanese,Jewish,Korean,Latin,American,Mediterranean,Mexican,Middle,Eastern,Nordic,Southern,Spanish,Thai,Vietnamese&fillIngredients=true&addRecipeInstructions=true`
 let fetchedRecipesArray = []
 
@@ -43,17 +44,20 @@ const displayNoResultsMessage = (message) => {
 // Fetch Default Recipes from API || Local Storage
 const fetchAllRecipeData = async () => {
   try {
-      const res = await fetch(recipesURL)
+      const res = await fetch(testURL)
       if (!res.ok) {
         throw new Error(`HTTP error! Status: ${res.status}`)
       }
 
       const data = await res.json()
-      if (!data.results || data.results.length === 0) {
+      if (!data.recipes || data.recipes.length === 0) {
         throw new Error("No results found in API response")
       }
 
-      fetchedRecipesArray = data.results
+      // fetchedRecipesArray = data.recipes
+      fetchedRecipesArray = data.recipes.filter((recipe) => {
+        return recipe.cuisines.length > 0 && recipe.image && recipe.title
+      })
 
       loadRecipes(fetchedRecipesArray)
       filterChoice(fetchedRecipesArray)
@@ -153,7 +157,7 @@ const filterByCuisine = async (cuisine) => {
   })    
   
   if (filteredRecipes.length === 0) {
-      displayNoResultsMessage(`No recipes found for ${cuisine} cuisine`)
+      displayNoResultsMessage(`Sorry! No recipes found for ${cuisine} cuisine. Try to refresh the page for new results.`)
     } else {
       loadRecipes(filteredRecipes)
     }
