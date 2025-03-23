@@ -5,7 +5,7 @@ const pickAllFilter = document.getElementById("all")
 const pickMexicanFilter = document.getElementById("mexican")
 const pickMediterraneanFilter = document.getElementById("mediterranean")
 const pickAsianFilter = document.getElementById("asian")
-const filterButtons = document.querySelectorAll(".filtered, .sorted, #random-recipe-btn")
+const allButtons = document.querySelectorAll(".filtered, .sorted, #random-recipe-btn")
 const randomRecipeBtn = document.getElementById("random-recipe-btn")
 
 const container = document.getElementById("js-recipe-container")
@@ -14,21 +14,21 @@ const container = document.getElementById("js-recipe-container")
 const apiKey = "2c9fdce04f884694b4cef3682f7a3bba"
 const randomURL = `https://api.spoonacular.com/recipes/random?apiKey=${apiKey}`
 const testURL = `https://api.spoonacular.com/recipes/random?apiKey=${apiKey}&number=20`
-const recipesURL = `https://api.spoonacular.com/recipes/complexSearch?apiKey=${apiKey}&number=20&addRecipeInformation=true&cuisine=African,Asian,American,British,Cajun,Caribbean,Chinese,Eastern,European,European,French,German,Greek,Indian,Irish,Italian,Japanese,Jewish,Korean,Latin,American,Mediterranean,Mexican,Middle,Eastern,Nordic,Southern,Spanish,Thai,Vietnamese&fillIngredients=true&addRecipeInstructions=true`
+
 let fetchedRecipesArray = []
 
 // Helper functions
 const clearContainerHTML = () => {
-  container.innerHTML = ''
+  container.innerHTML = ""
 }
 
 const updateMessage = (message) => {
-  messageBox.innerHTML = '' // Clear the message box
+  messageBox.innerHTML = "" // Clear the message box
   messageBox.innerHTML += `<p>${message}</p>`
 }
 
 const clearActiveButtons = () => {
-  filterButtons.forEach(button => {
+  allButtons.forEach(button => {
     button.classList.remove("active")
   })
 }
@@ -46,15 +46,15 @@ const fetchAllRecipeData = async () => {
   try {
       const res = await fetch(testURL)
       if (!res.ok) {
+        displayNoResultsMessage("Sorry! We had to dig some recipes out of our vault- our API limit was hit!")
         throw new Error(`HTTP error! Status: ${res.status}`)
       }
 
       const data = await res.json()
       if (!data.recipes || data.recipes.length === 0) {
-        throw new Error("No results found in API response")
+        throw new Error("Uh oh! No results found in API response, wait for it..")
       }
 
-      // fetchedRecipesArray = data.recipes
       fetchedRecipesArray = data.recipes.filter((recipe) => {
         return recipe.cuisines.length > 0 && recipe.image && recipe.title
       })
@@ -94,13 +94,13 @@ const loadRecipes = (array) => {
 
   if (!Array.isArray(array) || array.length === 0) {
     console.warn("No recipes to load bc array N/A.");
-    displayNoResultsMessage("No recipes available.")
+    displayNoResultsMessage("No recipes available. We wrote a strongly worded letter to management about this.")
     return
   }
 
   array.forEach(item => {
     if (!item) {
-      console.error("No recipe item found.")
+      console.error("No recipe item found.. keep them busy till I get back.")
       return
     }
 
@@ -121,27 +121,15 @@ const loadRecipes = (array) => {
     </div>
     <div class="ingredients">
       <h4>Ingredients:</h4>
+        <ul>
+          ${Array.isArray(item.extendedIngredients)
+          ? item.extendedIngredients.map((item) => `<li>${item.original}</li>`).join("")
+          : "<li>No ingredients available</li>"}   
+        </ul>
     </div>
-    <a href="${item.sourceUrl}" target="_blank">See Full Recipe</a>
+    <a href="${item.sourceUrl}">See Full Recipe</a>
     `
     container.appendChild(recipeCard)
-    
-    // Function to generate an unordered list of ingredients
-    const generateIngredientsList = (ingredients) => {
-      
-      const ul = document.createElement('ul')
-      
-      ingredients.forEach(ingredient => {
-      const li = document.createElement("li") 
-      li.textContent = ingredient.original || ingredient.name || "Unknown ingredient"
-      ul.appendChild(li)
-      })
-      return ul
-    }
-    const ingredientsList = generateIngredientsList(item.extendedIngredients || [])
-
-    const ingredientsContainer = recipeCard.querySelector(".ingredients")
-    ingredientsContainer.appendChild(ingredientsList)
   })
 }
 
@@ -158,7 +146,7 @@ const filterByCuisine = async (cuisine) => {
   )    
   
   filteredRecipes.length === 0
-      ? displayNoResultsMessage(`Sorry! No recipes found for ${cuisine} cuisine. Try to refresh the page for new results.`)
+      ? displayNoResultsMessage(`Sorry! No recipes found for ${cuisine} cuisine. Refresh the page for new results.`)
       : loadRecipes(filteredRecipes)
 }
 
@@ -211,6 +199,7 @@ const fetchRandomData = async () => {
   try {
       const res = await fetch(randomURL)
       if (!res.ok) {
+        displayNoResultsMessage("Sorry! We had to dig some recipes out of our vault- our API limit was hit!")
         throw new Error(`HTTP error! Status: ${res.status}`)
       }
 
@@ -220,7 +209,7 @@ const fetchRandomData = async () => {
       }
 
       displayRandomRecipe(data.recipes[0]) 
-      //randomURL provides only one recipe so this is unique
+      return
     
   } catch (error) {
       console.warn("API request failed, loading from localStorage...", error)
@@ -230,16 +219,28 @@ const fetchRandomData = async () => {
         const data = JSON.parse(savedData)
 
         const randomIndex = Math.floor(Math.random() * data.results.length)
-        const randomRecipe = fetchedRecipesArray[randomIndex]
+        const randomRecipe = data.results[randomIndex]
       
       displayRandomRecipe(randomRecipe)
       console.warn("All hope is not lost!🥳 localStorage loaded")
+      return
       
-      } else {
-        console.error("No recipes found in API or localStorage! IT'S ALL BROKEN 😩")
+      } else if 
+         (window.savedRecipesData?.results?.length) {
+          const randomIndex = Math.floor(Math.random() * window.savedRecipesData.results.length)
+          const savedData = window.savedRecipesData.results[randomIndex] 
+
+          // fetchedRecipesArray = savedData
+          displayRandomRecipe(savedData)
+          console.error("No recipes found in API or localStorage! IT'S ALL BROKEN 😩")
+          console.warn("All hope is not lost!🥳 savedFile saves the day")
+          return
+         }
+
+         displayNoResultsMessage("Sorry! No recipes found in API, localStorage, or saved files. We owe you one! 😞")
+
       }
     }
-  }
   
 // Function to Create/Display Random Recipe
 const displayRandomRecipe = (item) => {
@@ -291,8 +292,11 @@ filterChoice()
 
 sortChoice()
 
+
+
 // Holding these codes here for study reference. 
 // Just didn't want to misplace it
+
  /* // // Function to get a random recipe from Manual Rceipes
           // const getRandomRecipe = (recipesArray) => {
           //   const randomIndex = Math.floor(Math.random() * recipesArray.length)
@@ -494,3 +498,5 @@ sortChoice()
     //   }
     // ]
     */
+ /* // // const recipesURL = `https://api.spoonacular.com/recipes/complexSearch?apiKey=${apiKey}&number=20&addRecipeInformation=true&cuisine=African,Asian,American,British,Cajun,Caribbean,Chinese,Eastern,European,European,French,German,Greek,Indian,Irish,Italian,Japanese,Jewish,Korean,Latin,American,Mediterranean,Mexican,Middle,Eastern,Nordic,Southern,Spanish,Thai,Vietnamese&fillIngredients=true&addRecipeInstructions=true` */
+
