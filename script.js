@@ -11,8 +11,9 @@ const randomRecipeBtn = document.getElementById("random-recipe-btn")
 const container = document.getElementById("js-recipe-container")
 
 // API RESOURCES
-const randomURL = "https://api.spoonacular.com/recipes/random?apiKey=2c9fdce04f884694b4cef3682f7a3bba"
-const recipesURL = "https://api.spoonacular.com/recipes/complexSearch?apiKey=2c9fdce04f884694b4cef3682f7a3bba&number=20&addRecipeInformation=true&cuisine=African,Asian,American,British,Cajun,Caribbean,Chinese,Eastern,European,European,French,German,Greek,Indian,Irish,Italian,Japanese,Jewish,Korean,Latin,American,Mediterranean,Mexican,Middle,Eastern,Nordic,Southern,Spanish,Thai,Vietnamese&fillIngredients=true&addRecipeInstructions=true"
+const apiKey = "2c9fdce04f884694b4cef3682f7a3bba"
+const randomURL = `https://api.spoonacular.com/recipes/random?apiKey=${apiKey}`
+const recipesURL = `https://api.spoonacular.com/recipes/complexSearch?apiKey=${apiKey}&number=20&addRecipeInformation=true&cuisine=African,Asian,American,British,Cajun,Caribbean,Chinese,Eastern,European,European,French,German,Greek,Indian,Irish,Italian,Japanese,Jewish,Korean,Latin,American,Mediterranean,Mexican,Middle,Eastern,Nordic,Southern,Spanish,Thai,Vietnamese&fillIngredients=true&addRecipeInstructions=true`
 let fetchedRecipesArray = []
 
 // Helper functions
@@ -251,7 +252,7 @@ const fetchRandomData = async () => {
         const data = JSON.parse(savedData)
 
         const randomIndex = Math.floor(Math.random() * data.results.length)
-        const randomRecipe = fetchedRecipesArray[randomIndex]
+        const randomRecipe = console.log(fetchedRecipesArray[randomIndex])
       
       displayRandomRecipe(randomRecipe)
       console.warn("All hope is not lost!🥳 localStorage loaded")
