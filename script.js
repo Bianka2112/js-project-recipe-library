@@ -108,7 +108,9 @@ const loadRecipes = (array) => {
     recipeCard.classList.add('recipe-cards')
 
     recipeCard.innerHTML = `
-    <img src="${item.image || "./assets/no-image.png"}" alt="${item.title}">
+    <img src="${item.image}" 
+        alt="${item.title}" 
+        onerror="this.onerror=null; this.src='./assets/no-image.png';">
     <div class="recipe-title">
       <h3>${item.title}</h3>
     </div>
@@ -151,50 +153,40 @@ const filterByCuisine = async (cuisine) => {
     return
   }
   
-  const filteredRecipes = fetchedRecipesArray.filter(item => {
-    if (!item.cuisines || item.cuisines.length === 0) return false  // Handle missing cuisine data
-    return item.cuisines.some(c => c.toLowerCase() === cuisine.toLowerCase()) // Check within array
-  })    
+  const filteredRecipes = fetchedRecipesArray.filter(item => 
+    item.cuisines?.some(c => c.toLowerCase() === cuisine.toLowerCase())
+  )    
   
-  if (filteredRecipes.length === 0) {
-      displayNoResultsMessage(`Sorry! No recipes found for ${cuisine} cuisine. Try to refresh the page for new results.`)
-    } else {
-      loadRecipes(filteredRecipes)
-    }
+  filteredRecipes.length === 0
+      ? displayNoResultsMessage(`Sorry! No recipes found for ${cuisine} cuisine. Try to refresh the page for new results.`)
+      : loadRecipes(filteredRecipes)
 }
-// Filter Buttons Click
+
+// Filter Buttons Message and Click
 const filterChoice = () => {
+  const filters = [
+    {button: pickAllFilter, cuisine: "", message:"You eat everything, maybe liver then?" },
+    {button: pickMexicanFilter, cuisine: "mexican", message:"Yes. The answer is always tacos!" },
+    {button: pickMediterraneanFilter, cuisine: "mediterranean", message:"They say Mediterranean is the healthiest diet" },
+    {button: pickAsianFilter, cuisine: "asian", message:"你选择了中文" },
+  ]
 
-  pickAllFilter.addEventListener("click", () => {
-    clearActiveButtons()
-    activateButton(pickAllFilter)
-    updateMessage("You eat everything, maybe liver then?")
-    loadRecipes(fetchedRecipesArray)
-  })
-
-  pickMexicanFilter.addEventListener("click", () => {
-    clearActiveButtons()
-    activateButton(pickMexicanFilter)
-    updateMessage("Yes. The answer is always tacos!")
-    filterByCuisine("mexican")
-  })
-
-  pickMediterraneanFilter.addEventListener("click", () => {
-    clearActiveButtons()
-    activateButton(pickMediterraneanFilter)
-    updateMessage("They say Mediterranean is the healthiest diet")
-    filterByCuisine("mediterranean")
-  })
-
-  pickAsianFilter.addEventListener("click", () => {
-    clearActiveButtons()
-    activateButton(pickAsianFilter)
-    updateMessage("你选择了中文")
-    filterByCuisine("asian")
-  })
-}
+    filters.forEach(({ button, cuisine, message }) => {
+      button.addEventListener("click", () => {
+        clearActiveButtons()
+        activateButton(button)
+        updateMessage(message)
+        cuisine ? filterByCuisine(cuisine) : loadRecipes(fetchedRecipesArray)
+      })
+    })
+  }
 
 // Function to sort by time
+const sortRecipes = (order) => {
+  loadRecipes([...fetchedRecipesArray].sort((a, b) =>
+    order === "asc" ? a.readyInMinutes - b.readyInMinutes : b.readyInMinutes - a.readyInMinutes))
+}
+
 const sortChoice = () => {
   const ascendingButton = document.getElementById("ascending")
   const descendingButton = document.getElementById("descending")
@@ -203,14 +195,14 @@ const sortChoice = () => {
     clearActiveButtons()
     activateButton(ascendingButton)
     updateMessage("In a rush, much?")
-    loadRecipes([...fetchedRecipesArray].sort((a, b) => a.readyInMinutes - b.readyInMinutes))
+    sortRecipes("asc")
   })
 
   descendingButton.addEventListener("click", () => {
     clearActiveButtons()
     activateButton(descendingButton)
     updateMessage("Slow and steady = made with love")
-    loadRecipes([...fetchedRecipesArray].sort((a, b) => b.readyInMinutes - a.readyInMinutes))
+    sortRecipes("desc")
   })
 }
 
