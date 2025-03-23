@@ -57,10 +57,10 @@ const fetchAllRecipeData = async () => {
 
       loadRecipes(fetchedRecipesArray)
       filterChoice(fetchedRecipesArray)
+      console.log("All good, API loaded all recipes")
 
   } catch (error) {
     console.warn("API request failed, loading from localStorage...", error)
-  }
 
     const savedData = localStorage.getItem("recipes")
       if (savedData) {
@@ -74,32 +74,17 @@ const fetchAllRecipeData = async () => {
       console.error("No saved recipes found in localStorage! loading from local file...")
   }
 
-      if (window.savedRecipesData?.results?.length) {
-        const savedData = window.savedRecipesData.results || []
+    if (window.savedRecipesData?.results?.length) {
+      const savedData = window.savedRecipesData.results || []
 
       fetchedRecipesArray = savedData
       loadRecipes(fetchedRecipesArray)
       console.warn("All hope is not lost!🥳 savedFile saves the day")
+    }
+  }
+}   
     
-      }
-
-      if (typeof window.savedRecipesData === "string") {
-        try {
-          window.savedRecipesData = JSON.parse(window.savedRecipesData)
-          console.log("✅ Parsed `window.savedRecipesData` successfully.")
-
-          fetchedRecipesArray = savedData
-      loadRecipes(fetchedRecipesArray)
-      console.warn("All hope is not lost!🥳")
-
-        } catch (jsonError) {
-          console.error("❌ Failed to parse `window.savedRecipesData`:", jsonError)
-        }
-        console.error("No recipes found in anything! IT'S ALL BROKEN")
-      }
-  }   
-    
-// Function for all default recipes    
+// Load all recipes    
 const loadRecipes = (array) => {
 
   clearContainerHTML()
@@ -119,9 +104,8 @@ const loadRecipes = (array) => {
     const recipeCard = document.createElement('article')
     recipeCard.classList.add('recipe-cards')
 
-
     recipeCard.innerHTML = `
-    <img src="${item.image || "assets/no-image.png"}" alt="${item.title}">
+    <img src="${item.image || "./assets/no-image.png"}" alt="${item.title}">
     <div class="recipe-title">
       <h3>${item.title}</h3>
     </div>
@@ -153,7 +137,6 @@ const loadRecipes = (array) => {
 
     const ingredientsContainer = recipeCard.querySelector(".ingredients")
     ingredientsContainer.appendChild(ingredientsList)
-
   })
 }
 
@@ -216,7 +199,7 @@ const sortChoice = () => {
   ascendingButton.addEventListener("click", () => {
     clearActiveButtons()
     activateButton(ascendingButton)
-    updateMessage("What's the rush?")
+    updateMessage("In a rush, much?")
     loadRecipes([...fetchedRecipesArray].sort((a, b) => a.readyInMinutes - b.readyInMinutes))
   })
 
@@ -246,7 +229,7 @@ const fetchRandomData = async () => {
     
   } catch (error) {
       console.warn("API request failed, loading from localStorage...", error)
-  }
+
       const savedData = localStorage.getItem("recipes")
       if (savedData) {
         const data = JSON.parse(savedData)
@@ -261,6 +244,7 @@ const fetchRandomData = async () => {
         console.error("No recipes found in API or localStorage! IT'S ALL BROKEN")
       }
     }
+  }
   
 
 // Function to Create/Display Random Recipe
