@@ -215,12 +215,13 @@ const sortChoice = () => {
 const fetchRandomData = async () => {
   try {
       const res = await fetch(randomURL)
+      console.log(res)
       if (!res.ok) {
         throw new Error(`HTTP error! Status: ${res.status}`)
       }
 
       const data = await res.json()
-      if (!data.results || data.results.length === 0) {
+      if (!data.recipes || data.recipes.length === 0) {
         throw new Error("No results found in API response")
       }
 
@@ -241,14 +242,13 @@ const fetchRandomData = async () => {
       console.warn("All hope is not lost!🥳 localStorage loaded")
       
       } else {
-        console.error("No recipes found in API or localStorage! IT'S ALL BROKEN")
+        console.error("No recipes found in API or localStorage! IT'S ALL BROKEN 😩")
       }
     }
   }
   
-
 // Function to Create/Display Random Recipe
-  const displayRandomRecipe = (item) => {
+const displayRandomRecipe = (item) => {
       if (!item) {
         console.error("No recipe item found.")
       }
@@ -285,7 +285,7 @@ randomRecipeBtn.addEventListener('click', () => {
   activateButton(randomRecipeBtn)
   setTimeout(() => {
     randomRecipeBtn.classList.remove("active")
-  }, 10000)
+  }, 10000) // Removes rainbow styling after 10s so its not overstimulating.
   updateMessage("I picked this just for you! Are you surprised?")
 
   fetchRandomData() 
