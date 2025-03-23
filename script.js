@@ -57,7 +57,6 @@ const fetchAllRecipeData = async () => {
 
       loadRecipes(fetchedRecipesArray)
       filterChoice(fetchedRecipesArray)
-      console.log("All good, API loaded all recipes")
 
   } catch (error) {
     console.warn("API request failed, loading from localStorage...", error)
@@ -215,7 +214,6 @@ const sortChoice = () => {
 const fetchRandomData = async () => {
   try {
       const res = await fetch(randomURL)
-      console.log(res)
       if (!res.ok) {
         throw new Error(`HTTP error! Status: ${res.status}`)
       }
@@ -236,7 +234,7 @@ const fetchRandomData = async () => {
         const data = JSON.parse(savedData)
 
         const randomIndex = Math.floor(Math.random() * data.results.length)
-        const randomRecipe = console.log(fetchedRecipesArray[randomIndex])
+        const randomRecipe = fetchedRecipesArray[randomIndex]
       
       displayRandomRecipe(randomRecipe)
       console.warn("All hope is not lost!🥳 localStorage loaded")
@@ -290,8 +288,6 @@ randomRecipeBtn.addEventListener('click', () => {
 
   fetchRandomData() 
 })
-
-
 
 fetchAllRecipeData()
 
