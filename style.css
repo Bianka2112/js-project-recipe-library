@@ -19,15 +19,15 @@ h1 {
 }
 
 button {
+  border: 2px solid transparent;
   border-radius: 30px;
   background: #CCFFE2;
   color: #0018A4;
   padding: 15px 20px;
   outline: 0;
-  border: 0;
   text-decoration: none;
   cursor: pointer;
-  transition: background 1s ease, color 1s ease
+  transition: background .3s ease, color .3s ease, border .3s ease;
 }
 
 button:hover {
@@ -112,3 +112,9 @@ a {
   100% { background-position: 0% 50%; }
 }
 
+/* Responsive Design */
+@media (min-width: 1008px) {
+  .grid-container {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
